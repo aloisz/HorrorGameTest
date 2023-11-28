@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using UnityEngine.Serialization;
 
 
 namespace Player
@@ -12,6 +12,7 @@ namespace Player
     {
         public Camera playerCamera;
         [Header("Player controls")]
+        [Header("Movement")]
         public bool canMove = true;
         [SerializeField]internal float walkSpeed = 6f;
         [SerializeField]private float runSpeed = 12f;
@@ -23,6 +24,12 @@ namespace Player
 
         [HideInInspector]public Vector3 moveDirection = Vector3.zero;
         float rotationX = 0;
+
+        [Header("Crouch")]
+        [SerializeField] private bool isCrouching;
+        [SerializeField] private float crouchWalkSpeed = 3f;
+        private float baseWalkSpeed;
+        
 
         [Header("Player interaction")] 
         [SerializeField] private GameObject light;
@@ -48,6 +55,8 @@ namespace Player
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             isLightEquipped = true;
+            isCrouching = false;
+            baseWalkSpeed = walkSpeed;
         }
         
         void Update()
@@ -72,10 +81,10 @@ namespace Player
             isLightEquipped = !isLightEquipped;
             light.SetActive(isLightEquipped);
         }
-
-        private void OnMove(InputValue value)
+        private void OnCrouch(InputValue value)
         {
-            
+            isCrouching = !isCrouching;
+            walkSpeed = isCrouching ? crouchWalkSpeed : baseWalkSpeed;
         }
         
         
