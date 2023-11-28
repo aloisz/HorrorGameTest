@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+
 
 
 namespace Player
@@ -10,26 +12,26 @@ namespace Player
     {
         public Camera playerCamera;
         [Header("Player controls")]
-        public float walkSpeed = 6f;
+        public bool canMove = true;
+        [SerializeField]internal float walkSpeed = 6f;
         [SerializeField]private float runSpeed = 12f;
         [SerializeField]private float jumpPower = 7f;
         [SerializeField]private float gravity = 10f;
-
-
+        
         [SerializeField]private float lookSpeed = 2f;
         [SerializeField]private float lookXLimit = 45f;
 
-        
-        [Header("Player interaction")] 
-        [SerializeField] private float raycastLenght = 10;
-
-        public Vector3 moveDirection = Vector3.zero;
+        [HideInInspector]public Vector3 moveDirection = Vector3.zero;
         float rotationX = 0;
 
-        public bool canMove = true;
+        [Header("Player interaction")] 
+        [SerializeField] private GameObject light;
+        private bool isLightEquipped; 
+        [SerializeField] private float raycastLenght = 10;
+        
 
-        public Vector3 mouseWorldPosition;
-        public Vector2 mousePosition;
+        private Vector3 mouseWorldPosition;
+        private Vector2 mousePosition;
         
         public CharacterController characterController;
         public static PlayerController Instance;
@@ -45,6 +47,7 @@ namespace Player
             characterController = GetComponent<CharacterController>();
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+            isLightEquipped = true;
         }
         
         void Update()
@@ -63,7 +66,19 @@ namespace Player
             }
         }
 
+        
+        private void OnInteract(InputValue value)
+        {
+            isLightEquipped = !isLightEquipped;
+            light.SetActive(isLightEquipped);
+        }
 
+        private void OnMove(InputValue value)
+        {
+            
+        }
+        
+        
         private void Movement()
         {
             #region Handles Movment
