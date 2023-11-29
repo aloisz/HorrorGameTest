@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using CameraBehavior;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -26,7 +27,7 @@ namespace Player
         float rotationX = 0;
 
         [Header("Crouch")]
-        [SerializeField] private bool isCrouching;
+        public bool isCrouching;
         [SerializeField] private float crouchWalkSpeed = 3f;
         private float baseWalkSpeed;
         
@@ -101,6 +102,11 @@ namespace Player
             float movementDirectionY = moveDirection.y;
             moveDirection = (forward.normalized * curSpeedX) + (right.normalized * curSpeedY) ;
 
+            if (isRunning) isCrouching = false;
+            
+            CameraManager.instance.ChangeState(isCrouching
+                ? CameraManager.CameraState.Crouch
+                : CameraManager.CameraState.Normal);
             #endregion
 
             #region Handles Jumping
