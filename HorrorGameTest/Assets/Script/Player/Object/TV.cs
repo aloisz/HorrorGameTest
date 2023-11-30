@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
+using Player;
 using UnityEngine;
 
-public class TV : MonoBehaviour
+public class TV : InteractiveObj
 {
     [SerializeField] private Light light;
     public bool canRunCurve;
@@ -10,6 +12,7 @@ public class TV : MonoBehaviour
     private float graph, increment, incrementGradientValue;
     
     [SerializeField] private Gradient lightGradient;
+    [SerializeField] private AudioSource musicClip;
     void Start()
     {
         light = GetComponentInChildren<Light>();
@@ -32,5 +35,12 @@ public class TV : MonoBehaviour
                 incrementGradientValue = 0;
             }
         }
+    }
+
+    public override void Interact(PlayerController player)
+    {
+        canRunCurve = false;
+        light.intensity = 0;
+        musicClip.mute = true;
     }
 }

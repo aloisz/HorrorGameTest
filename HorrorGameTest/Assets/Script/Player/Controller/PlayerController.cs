@@ -15,11 +15,13 @@ namespace Player
         [Header("Player controls")]
         [Header("Movement")]
         public bool canMove = true;
+        [SerializeField]internal  bool isRunning;
         [SerializeField]internal float walkSpeed = 6f;
         [SerializeField]private float runSpeed = 12f;
         [SerializeField]private float jumpPower = 7f;
         [SerializeField]private float gravity = 10f;
-        
+
+        private Vector2 lookPos;
         [SerializeField]private float lookSpeed = 2f;
         [SerializeField]private float lookXLimit = 45f;
 
@@ -30,18 +32,21 @@ namespace Player
         public bool isCrouching;
         [SerializeField] private float crouchWalkSpeed = 3f;
         private float baseWalkSpeed;
-        
+
 
         [Header("Player interaction")] 
+        [SerializeField] private Transform hand;
         [SerializeField] private GameObject light;
         private bool isLightEquipped; 
         [SerializeField] private float raycastLenght = 10;
-        
+
+        [Space] 
+        [SerializeField] internal int numberOfBatterie;
 
         private Vector3 mouseWorldPosition;
         private Vector2 mousePosition;
         
-        public CharacterController characterController;
+        internal CharacterController characterController;
         public static PlayerController Instance;
 
         private void Awake()
@@ -63,59 +68,74 @@ namespace Player
         void Update()
         {
             mousePosition = Input.mousePosition;
-            Debug.DrawRay(Camera.main.transform.position,Camera.main.transform.forward * raycastLenght,Color.yellow);
             Movement();
-
             mouseWorldPosition = Vector3.zero;
+            
             RaycastHit hit;
-            Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
-            Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
-            if (Physics.Raycast(ray,out hit,999))
+            Debug.DrawRay(hand.position,hand.forward * raycastLenght,Color.yellow);
+
+            if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                mouseWorldPosition = hit.point;
+                if (Physics.Raycast(hand.position, hand.forward,out hit,raycastLenght))
+                {
+                    if (hit.transform.GetComponent<InteractiveObj>() != null)
+                    {
+                        hit.transform.GetComponent<InteractiveObj>().Interact(this);
+                    }
+                }
             }
         }
 
         
-        private void OnInteract(InputValue value)
+        public void OnInteract(InputAction.CallbackContext ctx)
         {
             isLightEquipped = !isLightEquipped;
             light.SetActive(isLightEquipped);
         }
-        private void OnCrouch(InputValue value)
+        public void OnCrouch(InputAction.CallbackContext ctx)
         {
             isCrouching = !isCrouching;
-            walkSpeed = isCrouching ? crouchWalkSpeed : baseWalkSpeed;
         }
         
+        public void OnRun(InputAction.CallbackContext ctx)
+        {
+            if (ctx.started)
+            {
+                isRunning = true;
+                isCrouching = true;
+            }
+            
+            if (ctx.canceled)
+                isRunning = false;
+        }
+
+        public void OnLook(InputAction.CallbackContext ctx)
+        {
+            lookPos = ctx.ReadValue<Vector2>();
+        }
         
+        #region Mouvement 
+
         private void Movement()
         {
-            #region Handles Movment
             Vector3 forward = transform.TransformDirection(Vector3.forward);
             Vector3 right = transform.TransformDirection(Vector3.right);
-
-            // Press Left Shift to run
-            bool isRunning = Input.GetKey(KeyCode.LeftShift);
+            
+            //bool isRunning = Input.GetKey(KeyCode.LeftShift);
             float curSpeedX = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Vertical") : 0;
             float curSpeedY = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Horizontal") : 0;
             float movementDirectionY = moveDirection.y;
             moveDirection = (forward.normalized * curSpeedX) + (right.normalized * curSpeedY) ;
 
             if (isRunning) isCrouching = false;
+            walkSpeed = isCrouching ? crouchWalkSpeed : baseWalkSpeed;
             
             CameraManager.instance.ChangeState(isCrouching
                 ? CameraManager.CameraState.Crouch
                 : CameraManager.CameraState.Normal);
-            #endregion
-
-            #region Handles Jumping
+            
             HandlesJumping(movementDirectionY);
-            #endregion
-
-            #region Handles Rotation
             HandlesRotation();
-            #endregion
         }
 
         private void HandlesJumping(float movementDirectionY)
@@ -135,18 +155,39 @@ namespace Player
             }
         }
 
+        private float posY;
+        private float posX;
         private void HandlesRotation()
         {
             characterController.Move(moveDirection * Time.deltaTime);
 
             if (canMove)
             {
-                rotationX += -Input.GetAxis("Mouse Y") * lookSpeed;
+                rotationX += -lookPos.y * lookSpeed;
                 rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
                 playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
-                transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
+                transform.rotation *= Quaternion.Euler(0, lookPos.x * lookSpeed, 0);
+                
+                /*posY += lookPos.x * lookSpeed;
+                posX -= lookPos.y * lookSpeed;
+
+                Vector3 targetRotation = new Vector3(posX, posY);
+                transform.eulerAngles = targetRotation;*/
             }
         }
+
+        #endregion
+
+        public void AddBatterie(int numberofBatterie)
+        {
+            numberOfBatterie += numberofBatterie;
+        }
+
+        public void RemoveBatterie(int numberofBatterie)
+        {
+            numberOfBatterie -= numberofBatterie;
+        }
+
     }
 }
 
