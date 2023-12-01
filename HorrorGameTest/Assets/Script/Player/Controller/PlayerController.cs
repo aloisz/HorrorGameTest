@@ -35,6 +35,7 @@ namespace Player
 
 
         [Header("Player interaction")] 
+        [SerializeField] bool isInteracting;
         [SerializeField] private Transform hand;
         [SerializeField] private GameObject light;
         private bool isLightEquipped; 
@@ -71,11 +72,22 @@ namespace Player
             Movement();
             mouseWorldPosition = Vector3.zero;
             
-            RaycastHit hit;
+            
             Debug.DrawRay(hand.position,hand.forward * raycastLenght,Color.yellow);
 
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+            if (isInteracting)
             {
+                
+            }
+        }
+
+        
+        public void OnInteract(InputAction.CallbackContext ctx)
+        {
+            if (ctx.started)
+            {
+                isInteracting = true;
+                RaycastHit hit;
                 if (Physics.Raycast(hand.position, hand.forward,out hit,raycastLenght))
                 {
                     if (hit.transform.GetComponent<InteractiveObj>() != null)
@@ -84,10 +96,10 @@ namespace Player
                     }
                 }
             }
+            if (ctx.canceled)isInteracting = false;
         }
-
         
-        public void OnInteract(InputAction.CallbackContext ctx)
+        public void OnUse(InputAction.CallbackContext ctx)
         {
             isLightEquipped = !isLightEquipped;
             light.SetActive(isLightEquipped);
