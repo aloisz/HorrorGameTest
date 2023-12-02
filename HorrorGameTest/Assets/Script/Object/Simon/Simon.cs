@@ -14,10 +14,12 @@ namespace SimonGame
         [SerializeField] private List<numberOfIterationToDo> numberOfIterationToDo = new List<numberOfIterationToDo>(); // Interation Of The Simon
         private int numberOfIterationToDoIndex;
         
-        [SerializeField] private List<SimonState> simomStates = new List<SimonState>();// action of the Simon
-        private List<SimonState> pressedButtonsStates = new List<SimonState>(); // pressed action by player
+        [SerializeField] private List<SimonState> simomStates = new List<SimonState>();// actions of the Simon
+        private List<SimonState> pressedButtonsStates = new List<SimonState>(); // pressed actions by player
         private int numberOfState; // numbers of actions needed until verification
         private int pressedNumbers; // numbers of pressed actions by the player
+
+        private Button[] AllButtonsAvailable; // All Buttons of the Simon
 
         public Action OnPlaySimon;
         
@@ -27,12 +29,17 @@ namespace SimonGame
             instance = this;
         }
 
+        private void Start()
+        {
+            AllButtonsAvailable = GetComponentsInChildren<Button>();
+        }
+
         public override void Interact(PlayerController player)
         {
             BatterieChecker(player);
         }
 
-        public void ChangeButtonsCollider()
+        private void ChangeButtonsCollider() // Action to enalble/disable button collider 
         {
             OnPlaySimon?.Invoke();
         }
@@ -56,7 +63,8 @@ namespace SimonGame
         
         private void PlaySimon()
         {
-            canPlayTheSimon = true;
+            if (PlayerController.Instance.isLightEquipped) PlayerController.Instance.isLightEquipped = false;
+
             if (!numberOfIterationToDo[numberOfIterationToDoIndex].hasAlreadyBeenAdded)
             {
                 for (int i = 0; i < numberOfIterationToDo[numberOfIterationToDoIndex].number; i++)
@@ -67,6 +75,25 @@ namespace SimonGame
                 }
                 numberOfIterationToDo[numberOfIterationToDoIndex].hasAlreadyBeenAdded = true;
             }
+            StartCoroutine(CoroutineDebugAllColors(simomStates));
+        }
+
+        private int coroutineDebugColorCount = 0;
+        IEnumerator CoroutineDebugAllColors(List<SimonState> simomStates)
+        {
+            coroutineDebugColorCount = 0;
+            foreach (var state in simomStates)
+            {
+                foreach (var button in AllButtonsAvailable)
+                {
+                    if (button.buttonState == state)
+                    {
+                        button.CallButton();
+                        yield return new WaitForSeconds(.75f);
+                    }
+                }
+            }
+            canPlayTheSimon = true;
             ChangeButtonsCollider();
         }
 

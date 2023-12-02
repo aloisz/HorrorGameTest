@@ -38,7 +38,7 @@ namespace Player
         [SerializeField] bool isInteracting;
         [SerializeField] private Transform hand;
         [SerializeField] private GameObject light;
-        private bool isLightEquipped; 
+        internal bool isLightEquipped; 
         [SerializeField] private float raycastLenght = 10;
 
         [Space] 
@@ -72,13 +72,9 @@ namespace Player
             Movement();
             mouseWorldPosition = Vector3.zero;
             
-            
             Debug.DrawRay(hand.position,hand.forward * raycastLenght,Color.yellow);
 
-            if (isInteracting)
-            {
-                
-            }
+            light.SetActive(isLightEquipped);
         }
 
         
@@ -102,7 +98,6 @@ namespace Player
         public void OnUse(InputAction.CallbackContext ctx)
         {
             isLightEquipped = !isLightEquipped;
-            light.SetActive(isLightEquipped);
         }
         public void OnCrouch(InputAction.CallbackContext ctx)
         {

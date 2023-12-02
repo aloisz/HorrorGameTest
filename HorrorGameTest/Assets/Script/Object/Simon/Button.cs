@@ -12,12 +12,15 @@ public class Button : InteractiveObj
     private Vector3 basePos;
     [SerializeField] private Vector3 PressedButtonPosition;
     private Collider coll;
+    private MeshRenderer meshrenderer;
     private void Start()
     {
         coll = GetComponent<Collider>();
+        meshrenderer = GetComponent<MeshRenderer>();
         coll.enabled = false;
+        
         Simon.instance.OnPlaySimon += ChangeCollider;
-        basePos = transform.localPosition;
+        basePos = transform.position;
         PressedButtonPosition = basePos + new Vector3(0,-.2f,0);
     }
 
@@ -34,5 +37,12 @@ public class Button : InteractiveObj
     private void ChangeCollider()
     {
         coll.enabled = Simon.instance.canPlayTheSimon;
+    }
+
+    public void CallButton()
+    {
+        Debug.Log(buttonState);
+        transform.DOMove(PressedButtonPosition, .25f).OnComplete((() => 
+            transform.DOMove(basePos, 0.25f)));
     }
 }
