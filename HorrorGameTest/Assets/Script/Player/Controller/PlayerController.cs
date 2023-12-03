@@ -26,7 +26,7 @@ namespace Player
         [SerializeField]private float lookXLimit = 45f;
 
         [HideInInspector]public Vector3 moveDirection = Vector3.zero;
-        float rotationX = 0;
+        internal float rotationX = 0; 
 
         [Header("Crouch")]
         public bool isCrouching;

@@ -4514,6 +4514,43 @@ MonoBehaviour:
   crouchCameraPos: {x: 0, y: -0.15, z: 0}
   runningBobbingSpeed: 14
   runningBobbingAmount: 0.2
+  BobbingCameraRunningCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: -0.008324085
+      outSlope: -0.008324085
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.5762688
+    - serializedVersion: 3
+      time: 0.37917328
+      value: 0.95754623
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.9916667
+      value: 0.0023584906
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 1
+    m_RotationOrder: 4
+  duration: 0.35
+  maxHeightX: 0.2
+  maxHeightY: 0.4
+  maxRotationZ: 14
 --- !u!1 &1219824595
 GameObject:
   m_ObjectHideFlags: 0
