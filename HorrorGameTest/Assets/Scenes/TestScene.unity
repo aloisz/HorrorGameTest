@@ -3550,6 +3550,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 0}
   canMove: 1
+  isWalking: 0
   isRunning: 0
   walkSpeed: 6
   runSpeed: 12
@@ -4035,7 +4036,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 98b7760fef40cc94e82af4a5e3e8b6ed, type: 3}
+  m_audioClip: {fileID: 8300000, guid: f43c675e9f87a2145a8858bdeec3d77c, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -4550,7 +4551,7 @@ MonoBehaviour:
   duration: 0.35
   maxHeightX: 0.2
   maxHeightY: 0.4
-  maxRotationX: 14
+  maxRotationX: 7
   maxRotationZ: 14
 --- !u!1 &1219824595
 GameObject:

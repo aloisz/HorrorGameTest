@@ -15,6 +15,7 @@ namespace Player
         [Header("Player controls")]
         [Header("Movement")]
         public bool canMove = true;
+        [SerializeField]internal  bool isWalking;
         [SerializeField]internal  bool isRunning;
         [SerializeField]internal float walkSpeed = 6f;
         [SerializeField]private float runSpeed = 12f;
@@ -132,7 +133,9 @@ namespace Player
             float curSpeedX = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Vertical") : 0;
             float curSpeedY = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Horizontal") : 0;
             float movementDirectionY = moveDirection.y;
-            moveDirection = (forward.normalized * curSpeedX) + (right.normalized * curSpeedY) ;
+            moveDirection = (forward.normalized * curSpeedX) + (right.normalized * curSpeedY);
+            
+            isWalking = moveDirection != Vector3.zero; // check if walking
 
             if (isRunning) isCrouching = false;
             walkSpeed = isCrouching ? crouchWalkSpeed : baseWalkSpeed;

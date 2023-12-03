@@ -83,7 +83,7 @@ namespace CameraBehavior
         private bool doOnce = false;
         private void HeadBobing()
         {
-            if(Mathf.Abs(PlayerController.Instance.moveDirection.x) > PlayerController.Instance.walkSpeed +2 || Mathf.Abs(PlayerController.Instance.moveDirection.z) > PlayerController.Instance.walkSpeed+2 &&
+            if(PlayerController.Instance.isWalking && PlayerController.Instance.isRunning &&
                 PlayerController.Instance.characterController.isGrounded)
             {
                 //Player is moving
