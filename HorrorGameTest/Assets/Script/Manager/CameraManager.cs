@@ -38,6 +38,7 @@ namespace CameraBehavior
         [SerializeField] private float maxHeightX = 3.0f;
         [SerializeField] private float maxHeightY = 3.0f;
         
+        [SerializeField] private float maxRotationX = 20f;
         [SerializeField] private float maxRotationZ = 20f;
         
         public static CameraManager instance;
@@ -111,6 +112,7 @@ namespace CameraBehavior
             doOnceMaxRotationZ = doOnce;
             yield return null;
             maxRotationZ = doOnceMaxRotationZ ? -maxRotationZ : maxRotationZ;
+            //maxRotationX = doOnceMaxRotationZ ? -maxRotationX : maxRotationX;
             
             while (timePast < duration)
             {
@@ -122,10 +124,11 @@ namespace CameraBehavior
                 var heightY = Mathf.Lerp(0f, maxHeightY, heightTime); //clamped between the max height and 0
 
                 var rotZ = Mathf.Lerp(0, maxRotationZ, heightTime);
+                var rotX = Mathf.Lerp(0, maxRotationX, heightTime);
 
                 obj.transform.localPosition = Vector3.Lerp(start, finish, linearTime) + new Vector3(heightX, heightY, 0f);
                 obj.transform.localEulerAngles = new Vector3(
-                    PlayerController.Instance.rotationX,
+                    rotX + PlayerController.Instance.rotationX,
                     0,
                     rotZ);
                 
