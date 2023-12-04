@@ -37,7 +37,9 @@ namespace CameraBehavior
         [SerializeField] private float duration = 1.0f;
         [SerializeField] private float maxHeightX = 3.0f;
         [SerializeField] private float maxHeightY = 3.0f;
+        [SerializeField] private float maxHeightZ = 3.0f;
         
+        [Space]
         [SerializeField] private float maxRotationX = 20f;
         [SerializeField] private float maxRotationZ = 20f;
         
@@ -83,7 +85,7 @@ namespace CameraBehavior
         private bool doOnce = false;
         private void HeadBobing()
         {
-            if(PlayerController.Instance.isWalking && PlayerController.Instance.isRunning &&
+            if(PlayerController.Instance.isRunning &&
                 PlayerController.Instance.characterController.isGrounded)
             {
                 //Player is moving
@@ -91,7 +93,10 @@ namespace CameraBehavior
                 if (!doOnce)
                 {
                     doOnce = true;
-                    StartCoroutine(CoroutineBobbingCameraRunningCurve(camera.gameObject,camera.transform.localPosition, camera.transform.localPosition));
+                    StartCoroutine(CoroutineBobbingCameraRunningCurve(camera.gameObject,camera.transform.localPosition, new Vector3(
+                        defaultPosX,
+                        defaultPosY,
+                        0)));
                 }
                 //camera.transform.localPosition = new Vector3(defaultPosX + Mathf.Sin(timer) * runningBobbingAmount, defaultPosY + Mathf.Sin(timer) * runningBobbingAmount, camera.transform.localPosition.z);
             }
@@ -111,9 +116,8 @@ namespace CameraBehavior
             
             doOnceMaxRotationZ = doOnce;
             yield return null;
-            maxRotationZ = doOnceMaxRotationZ ? -maxRotationZ : maxRotationZ;
-            //maxRotationX = doOnceMaxRotationZ ? -maxRotationX : maxRotationX;
-            
+            maxRotationZ = doOnceMaxRotationZ ? -maxRotationZ : maxRotationZ; // one time positive one time negative
+
             while (timePast < duration)
             {
                 timePast += Time.deltaTime;
@@ -121,12 +125,14 @@ namespace CameraBehavior
                 var heightTime = BobbingCameraRunningCurve.Evaluate(linearTime); 
 
                 var heightX = Mathf.Lerp(0, randomValueX, heightTime); //clamped between the max height and 0
-                var heightY = Mathf.Lerp(0f, maxHeightY, heightTime); //clamped between the max height and 0
+                var heightY = Mathf.Lerp(0f, maxHeightY, heightTime); 
+                var heightZ = Mathf.Lerp(0f, maxHeightZ, heightTime); 
+
 
                 var rotZ = Mathf.Lerp(0, maxRotationZ, heightTime);
                 var rotX = Mathf.Lerp(0, maxRotationX, heightTime);
 
-                obj.transform.localPosition = Vector3.Lerp(start, finish, linearTime) + new Vector3(heightX, heightY, 0f);
+                obj.transform.localPosition = Vector3.Lerp(start, finish, linearTime) + new Vector3(heightX, heightY, heightZ);
                 obj.transform.localEulerAngles = new Vector3(
                     rotX + PlayerController.Instance.rotationX,
                     0,
