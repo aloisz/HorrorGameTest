@@ -24,7 +24,7 @@ namespace CameraBehavior
         [SerializeField] private float timertoCrouch = .25f; 
         [SerializeField] private Vector3 crouchCameraPos;
         
-        [Header("Bobbing")]
+        [Space]
         public float runningBobbingSpeed = 14f;
         public float runningBobbingAmount = 0.05f;
 
@@ -33,6 +33,7 @@ namespace CameraBehavior
         float timer = 0;
 
         [Space] 
+        [Header("Camera Boobing")]
         public AnimationCurve BobbingCameraRunningCurve;
         [SerializeField] private float duration = 1.0f;
         [SerializeField] private float maxHeightX = 3.0f;
@@ -54,6 +55,9 @@ namespace CameraBehavior
             camera = Camera.main;
             defaultPosY = camera.transform.localPosition.y;
             defaultPosX = camera.transform.localPosition.x;
+
+            baseMaxRotationX = maxRotationX;
+            baseMaxRotationZ = maxRotationZ;
         }
         
         void LateUpdate()
@@ -69,6 +73,7 @@ namespace CameraBehavior
             }
         }
 
+        // Change The camera State Behavior
         public void ChangeState(CameraState state)
         {
             this.state = state;
@@ -82,23 +87,18 @@ namespace CameraBehavior
         }
 
 
-        private bool doOnce = false;
+        [SerializeField]private bool doOnce = false;
         private void HeadBobing()
         {
-            if(PlayerController.Instance.isRunning &&
-                PlayerController.Instance.characterController.isGrounded)
+            if(PlayerController.Instance.isRunning && PlayerController.Instance.characterController.isGrounded)
             {
                 //Player is moving
-                timer += Time.deltaTime * runningBobbingSpeed;
                 if (!doOnce)
                 {
                     doOnce = true;
-                    StartCoroutine(CoroutineBobbingCameraRunningCurve(camera.gameObject,camera.transform.localPosition, new Vector3(
-                        defaultPosX,
-                        defaultPosY,
-                        0)));
+                    StartCoroutine(CoroutineBobbingCameraRunningCurve(camera.gameObject,camera.transform.localPosition, 
+                        new Vector3(defaultPosX, defaultPosY, 0)));
                 }
-                //camera.transform.localPosition = new Vector3(defaultPosX + Mathf.Sin(timer) * runningBobbingAmount, defaultPosY + Mathf.Sin(timer) * runningBobbingAmount, camera.transform.localPosition.z);
             }
             else 
             {
@@ -106,6 +106,7 @@ namespace CameraBehavior
                 timer = 0;
                 camera.transform.localPosition = new Vector3(Mathf.Lerp(camera.transform.localPosition.x, defaultPosX, Time.deltaTime * runningBobbingSpeed), Mathf.Lerp(camera.transform.localPosition.y, defaultPosY, Time.deltaTime * runningBobbingSpeed), camera.transform.localPosition.z);
             }
+            UpdateValueWhenSprinting();
         }
 
         private bool doOnceMaxRotationZ = false; // Check if the value need to be negative or positive
@@ -132,15 +133,40 @@ namespace CameraBehavior
                 var rotZ = Mathf.Lerp(0, maxRotationZ, heightTime);
                 var rotX = Mathf.Lerp(0, maxRotationX, heightTime);
 
+                // Camera Position
                 obj.transform.localPosition = Vector3.Lerp(start, finish, linearTime) + new Vector3(heightX, heightY, heightZ);
+                
+                // Camera Rotation
                 obj.transform.localEulerAngles = new Vector3(
                     rotX + PlayerController.Instance.rotationX,
                     0,
-                    rotZ);
+                    rotZ); 
                 
                 yield return null;
             }
             doOnce = false;
+        }
+
+        /// <summary>
+        /// When Sprinting The value of the camera will increment by time
+        /// </summary>
+        [Space]
+        [SerializeField] private float timeToReachMaxValue = 3;
+        private float incrementValueOverTime = 0; 
+        private float baseMaxRotationX;
+        private float baseMaxRotationZ;
+        private void UpdateValueWhenSprinting()
+        {
+            if (PlayerController.Instance.isRunning && PlayerController.Instance.characterController.isGrounded)
+            {
+                if(incrementValueOverTime <= timeToReachMaxValue ) incrementValueOverTime += Time.deltaTime * 1;
+            }
+            else
+            {
+                if(incrementValueOverTime >= 0 ) incrementValueOverTime -= Time.deltaTime * 1;
+            }
+            maxRotationX =  baseMaxRotationX * incrementValueOverTime / timeToReachMaxValue;
+            maxRotationZ = baseMaxRotationZ * incrementValueOverTime / timeToReachMaxValue;
         }
     }
 }
