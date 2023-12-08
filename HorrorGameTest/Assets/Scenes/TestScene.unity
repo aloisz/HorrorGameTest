@@ -4552,8 +4552,9 @@ MonoBehaviour:
   maxHeightX: 0.2
   maxHeightY: 0.1
   maxHeightZ: 0.5
-  maxRotationX: 7
+  maxRotationX: 10
   maxRotationZ: 14
+  timeToReachMaxValue: 3
 --- !u!1 &1219824595
 GameObject:
   m_ObjectHideFlags: 0

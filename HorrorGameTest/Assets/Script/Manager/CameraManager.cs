@@ -43,6 +43,7 @@ namespace CameraBehavior
         [Space]
         [SerializeField] private float maxRotationX = 20f;
         [SerializeField] private float maxRotationZ = 20f;
+        [SerializeField] private float timeToReachMaxValue = 3;
         
         public static CameraManager instance;
 
@@ -87,11 +88,13 @@ namespace CameraBehavior
         }
 
 
-        [SerializeField]private bool doOnce = false;
+        private bool doOnce = false;
         private void HeadBobing()
         {
+            UpdateValueWhenSprinting();
             if(PlayerController.Instance.isRunning && PlayerController.Instance.characterController.isGrounded)
             {
+                Debug.Log(doOnce);
                 //Player is moving
                 if (!doOnce)
                 {
@@ -106,7 +109,6 @@ namespace CameraBehavior
                 timer = 0;
                 camera.transform.localPosition = new Vector3(Mathf.Lerp(camera.transform.localPosition.x, defaultPosX, Time.deltaTime * runningBobbingSpeed), Mathf.Lerp(camera.transform.localPosition.y, defaultPosY, Time.deltaTime * runningBobbingSpeed), camera.transform.localPosition.z);
             }
-            UpdateValueWhenSprinting();
         }
 
         private bool doOnceMaxRotationZ = false; // Check if the value need to be negative or positive
@@ -150,23 +152,31 @@ namespace CameraBehavior
         /// <summary>
         /// When Sprinting The value of the camera will increment by time
         /// </summary>
-        [Space]
-        [SerializeField] private float timeToReachMaxValue = 3;
         private float incrementValueOverTime = 0; 
-        private float baseMaxRotationX;
-        private float baseMaxRotationZ;
+        private float baseMaxRotationX; // Get the value of MaxRotationX to modify it 
+        private float baseMaxRotationZ;// Get the value of MaxRotationY to modify it 
+        private int check;
         private void UpdateValueWhenSprinting()
         {
             if (PlayerController.Instance.isRunning && PlayerController.Instance.characterController.isGrounded)
             {
                 if(incrementValueOverTime <= timeToReachMaxValue ) incrementValueOverTime += Time.deltaTime * 1;
+                if (!doOnce)
+                {
+                    check++;
+                }
             }
             else
             {
                 if(incrementValueOverTime >= 0 ) incrementValueOverTime -= Time.deltaTime * 1;
             }
             maxRotationX =  baseMaxRotationX * incrementValueOverTime / timeToReachMaxValue;
-            maxRotationZ = baseMaxRotationZ * incrementValueOverTime / timeToReachMaxValue;
+            
+            if(check % 2 == 0) maxRotationZ = baseMaxRotationZ * incrementValueOverTime / timeToReachMaxValue;
+            else
+            {
+                maxRotationZ = -baseMaxRotationZ * incrementValueOverTime / timeToReachMaxValue;
+            }
         }
     }
 }
