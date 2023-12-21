@@ -9990,7 +9990,7 @@ MonoBehaviour:
   camera: {fileID: 0}
   state: 0
   timertoCrouch: 0.35
-  crouchCameraPos: {x: 0, y: -0.15, z: 0}
+  crouchCameraPos: {x: 0, y: -0.7, z: 0}
   runningBobbingSpeed: 14
   runningBobbingAmount: 0.2
   BobbingCameraRunningCurve:
@@ -10071,7 +10071,7 @@ MonoBehaviour:
   maxHeightYIdle: 0
   maxHeightZIdle: 0
   maxRotationXIdle: 10
-  maxRotationZIdle: 5
+  maxRotationZIdle: 50
 --- !u!1 &1206669170
 GameObject:
   m_ObjectHideFlags: 0

@@ -103,7 +103,7 @@ namespace CameraBehavior
         private void Crouch()
         {
             camera.transform.localPosition = 
-                new Vector3(camera.transform.localPosition.x,Mathf.Lerp(camera.transform.localPosition.y, crouchCameraPos.y,timertoCrouch)
+                new Vector3(camera.transform.localPosition.x,Mathf.Lerp(defaultPosY, crouchCameraPos.y,timertoCrouch)
                     ,camera.transform.localPosition.z);
         }
 
@@ -126,8 +126,10 @@ namespace CameraBehavior
             else //Idle
             { 
                 ChangeState(CameraState.Normal);
-                if (!doOnceIdle)
-                {
+                if (!doOnceIdle && !doOnce )
+                { 
+                    //TODO : Wait for the previous anim curve to finish 
+                    
                     doOnceIdle = true;
                     StartCoroutine(CoroutineBobbingCameraIdleCurve(camera.gameObject,camera.transform.localPosition, 
                         new Vector3(defaultPosX, defaultPosY, 0)));
