@@ -56,8 +56,7 @@ namespace CameraBehavior
         [Space]
         [SerializeField] private float maxRotationXIdle = 20f;
         [SerializeField] private float maxRotationZIdle = 20f;
-        
-        
+
         public static CameraManager instance;
 
         private void Awake()
