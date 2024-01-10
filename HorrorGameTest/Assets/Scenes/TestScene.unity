@@ -2556,7 +2556,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 8400000, guid: 54a385349da07d24093b3c161033b7e2, type: 2}
+  m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
@@ -15726,7 +15726,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &730995892
 RectTransform:
   m_ObjectHideFlags: 0
@@ -19808,7 +19808,7 @@ MonoBehaviour:
   maxHeightZRunning: 0.5
   maxRotationXRunning: 10
   maxRotationZRunning: 14
-  timeToReachMaxValue: 1
+  timeToReachMaxValue: 4
   BobbingCameraIdleCurve:
     serializedVersion: 2
     m_Curve:
@@ -19846,7 +19846,7 @@ MonoBehaviour:
   maxHeightXIdle: 0
   maxHeightYIdle: 0
   maxHeightZIdle: 0
-  maxRotationXIdle: 10
+  maxRotationXIdle: 15
   maxRotationZIdle: 5
 --- !u!1 &1206669170
 GameObject:
