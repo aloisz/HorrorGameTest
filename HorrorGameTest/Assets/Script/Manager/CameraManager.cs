@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using Player;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -23,17 +24,15 @@ namespace CameraBehavior
 
         [Header("CrouchCamera")] 
         [SerializeField] private float timertoCrouch = .25f; 
-        [SerializeField] private Vector3 crouchCameraPos;
+        [SerializeField] private Transform crouchCameraPos;
         
         [Space]
-        public float runningBobbingSpeed = 14f;
-        public float runningBobbingAmount = 0.05f;
-
         private float defaultPosY = 0; // defaults camera position on y axis
         private float defaultPosX = 0; // defaults camera position on x axis
 
         [Space] 
         [Header("Camera Boobing")]
+        [SerializeField] private float timeToReachMaxValue = 3; // Time to reach the max effect on camera
         [Header("Running")]
         public AnimationCurve BobbingCameraRunningCurve;
         [SerializeField] private float durationRunning = 1.0f; // Animation curve Duration
@@ -44,7 +43,6 @@ namespace CameraBehavior
         [Space]
         [SerializeField] private float maxRotationXRunning = 20f;
         [SerializeField] private float maxRotationZRunning = 20f;
-        [SerializeField] private float timeToReachMaxValue = 3; // Time to reach the max effect on camera
         
         [Header("Idle")]
         public AnimationCurve BobbingCameraIdleCurve;
@@ -83,6 +81,7 @@ namespace CameraBehavior
             switch (state)
             {
                 case CameraState.Normal:
+                    HeadBobing();
                     break;
                 case CameraState.Crouch:
                     Crouch();
@@ -90,7 +89,6 @@ namespace CameraBehavior
                 case CameraState.Running:
                     break;
             }
-            if(!PlayerController.Instance.isCrouching) HeadBobing();
         }
 
         // Change The camera State Behavior
@@ -101,18 +99,17 @@ namespace CameraBehavior
 
         private void Crouch()
         {
-            camera.transform.localPosition = 
-                new Vector3(camera.transform.localPosition.x,Mathf.Lerp(defaultPosY, crouchCameraPos.y,timertoCrouch)
-                    ,camera.transform.localPosition.z);
-        }
-
+            StopAllCoroutines();
+            camera.transform.DOMove(crouchCameraPos.position, timertoCrouch);
+        }   
+    
 
         private bool doOnce = false;
         private void HeadBobing()
         {
             UpdateValueWhenSprinting();
             UpdateValueWhenIdle();
-            if(PlayerController.Instance.isRunning ) //Player is running
+            if(PlayerController.Instance.isRunning) //Player is running
             {
                 ChangeState(CameraState.Running);
                 if (!doOnce)
@@ -125,10 +122,8 @@ namespace CameraBehavior
             else //Idle
             { 
                 ChangeState(CameraState.Normal);
-                if (!doOnceIdle && !doOnce )
+                if (!doOnceIdle && !doOnce)
                 { 
-                    //TODO : Wait for the previous anim curve to finish 
-                    
                     doOnceIdle = true;
                     StartCoroutine(CoroutineBobbingCameraIdleCurve(camera.gameObject,camera.transform.localPosition, 
                         new Vector3(defaultPosX, defaultPosY, 0)));

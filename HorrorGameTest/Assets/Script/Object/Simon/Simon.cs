@@ -46,7 +46,7 @@ namespace SimonGame
 
         private void BatterieChecker(PlayerController player)
         {
-            switch (player.numberOfBatterie)
+            switch (PlayerInteraction.Instance.numberOfBatterie)
             {
                 case <1:
                     Debug.Log("Il vous faut au moins une batterie en main !");
@@ -57,13 +57,13 @@ namespace SimonGame
                     PlaySimon();
                     break;
             }
-            player.RemoveBatterie(player.numberOfBatterie);
+            PlayerInteraction.Instance.RemoveBatterie(PlayerInteraction.Instance.numberOfBatterie);
         } 
         
         
         private void PlaySimon()
         {
-            if (PlayerController.Instance.isLightEquipped) PlayerController.Instance.isLightEquipped = false;
+            if (PlayerInteraction.Instance.isLightEquipped) PlayerInteraction.Instance.isLightEquipped = false;
 
             if (!numberOfIterationToDo[numberOfIterationToDoIndex].hasAlreadyBeenAdded)
             {
