@@ -103,7 +103,7 @@ namespace Player
             
             CameraManager.instance.ChangeState(isCrouching
                 ? CameraManager.CameraState.Crouch
-                : CameraManager.CameraState.Normal);
+                : CameraManager.CameraState.Idle);
             
             HandlesJumping(movementDirectionY);
             HandlesRotation();

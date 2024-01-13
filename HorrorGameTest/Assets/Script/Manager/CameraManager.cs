@@ -16,7 +16,7 @@ namespace CameraBehavior
         
         public enum CameraState
         {
-            Normal,
+            Idle,
             Running,
             Crouch
         }
@@ -30,10 +30,13 @@ namespace CameraBehavior
         private float defaultPosY = 0; // defaults camera position on y axis
         private float defaultPosX = 0; // defaults camera position on x axis
 
+        
         [Space] 
         [Header("Camera Boobing")]
+        
         [SerializeField] private float timeToReachMaxValue = 3; // Time to reach the max effect on camera
         [Header("Running")]
+        private bool doOnceRunning = false;
         public AnimationCurve BobbingCameraRunningCurve;
         [SerializeField] private float durationRunning = 1.0f; // Animation curve Duration
         [SerializeField] private float maxHeightXRunning = 3.0f; 
@@ -45,6 +48,7 @@ namespace CameraBehavior
         [SerializeField] private float maxRotationZRunning = 20f;
         
         [Header("Idle")]
+        private bool doOnceIdle;
         public AnimationCurve BobbingCameraIdleCurve;
         [SerializeField] private float durationIdle = 1.0f;
         [SerializeField] private float maxHeightXIdle = 3.0f;
@@ -78,130 +82,47 @@ namespace CameraBehavior
         
         void LateUpdate()
         {
+            UpdateValueWhenSprinting();
+            UpdateValueWhenIdle();
+
+            ChangeState(PlayerController.Instance.isRunning ? CameraState.Running : CameraState.Idle); //Player is running
+
             switch (state)
             {
-                case CameraState.Normal:
-                    HeadBobing();
+                case CameraState.Idle:
+                    BoobingIdle();
                     break;
                 case CameraState.Crouch:
                     Crouch();
                     break;
                 case CameraState.Running:
+                    BoobingRunning();
                     break;
             }
         }
 
-        // Change The camera State Behavior
+        // Change The State Behavior
         public void ChangeState(CameraState state)
         {
             this.state = state;
         }
 
-        private void Crouch()
-        {
-            StopAllCoroutines();
-            camera.transform.DOMove(crouchCameraPos.position, timertoCrouch);
-        }   
-    
-
-        private bool doOnce = false;
-        private void HeadBobing()
-        {
-            UpdateValueWhenSprinting();
-            UpdateValueWhenIdle();
-            if(PlayerController.Instance.isRunning) //Player is running
-            {
-                ChangeState(CameraState.Running);
-                if (!doOnce)
-                {
-                    doOnce = true;
-                    StartCoroutine(CoroutineBobbingCameraRunningCurve(camera.gameObject,camera.transform.localPosition, 
-                        new Vector3(defaultPosX, defaultPosY, 0)));
-                }
-            }
-            else //Idle
-            { 
-                ChangeState(CameraState.Normal);
-                if (!doOnceIdle && !doOnce)
-                { 
-                    doOnceIdle = true;
-                    StartCoroutine(CoroutineBobbingCameraIdleCurve(camera.gameObject,camera.transform.localPosition, 
-                        new Vector3(defaultPosX, defaultPosY, 0)));
-                }
-            }
-        }
-
-        private bool doOnceMaxRotationZ = false; // Check if the value need to be negative or positive
-        private IEnumerator CoroutineBobbingCameraRunningCurve(GameObject obj, Vector3 start, Vector3 finish)
-        {
-            var timePast = 0f;
-            float randomValueX = Random.Range(-maxHeightXRunning, maxHeightXRunning);
-            
-            doOnceMaxRotationZ = doOnce;
-            yield return null;
-            //maxRotationZRunning = doOnceMaxRotationZ ? -maxRotationZRunning : maxRotationZRunning; // one time positive one time negative
-
-            while (timePast < durationRunning)
-            {
-                timePast += Time.deltaTime;
-                var linearTime = timePast / durationRunning;
-                var heightTime = BobbingCameraRunningCurve.Evaluate(linearTime);
-
-                var heightX = Mathf.Lerp(0, randomValueX, heightTime); //clamped between the max height and 0
-                var heightY = Mathf.Lerp(0f, maxHeightYRunning, heightTime); 
-                var heightZ = Mathf.Lerp(0f, maxHeightZRunning, heightTime); 
-
-
-                var rotZ = Mathf.Lerp(0, maxRotationZRunning, heightTime);
-                var rotX = Mathf.Lerp(0, maxRotationXRunning, heightTime);
-
-                // Camera Position
-                obj.transform.localPosition = Vector3.Lerp(start, finish, linearTime) + new Vector3(heightX, heightY, heightZ);
-                
-                // Camera Rotation
-                obj.transform.localEulerAngles = new Vector3(
-                    rotX + PlayerController.Instance.rotationX,
-                    0,
-                    rotZ); 
-                
-                yield return null;
-            }
-            doOnce = false;
-        }
         
         
-
         /// <summary>
-        /// When Sprinting The value of the camera will increment by time
+        /// Idle Management here
         /// </summary>
-        private float incrementValueOverTime = 0; 
-        private float baseMaxRotationXRunning; // Get the value of MaxRotationX to modify it 
-        private float baseMaxRotationZRunning;// Get the value of MaxRotationY to modify it 
-        private int check; // just to check if the balance of camera is on right or left side
-        private void UpdateValueWhenSprinting()
+        #region Idle
+
+        private void BoobingIdle()
         {
-            if (PlayerController.Instance.isRunning )
-            {
-                if(incrementValueOverTime <= timeToReachMaxValue ) incrementValueOverTime += Time.deltaTime * 1;
-                if (!doOnce)
-                {
-                    check++;
-                }
-            }
-            else
-            {
-                if(incrementValueOverTime >= 0 ) incrementValueOverTime -= Time.deltaTime * 1;
-            }
-            maxRotationXRunning =  baseMaxRotationXRunning * incrementValueOverTime / timeToReachMaxValue;
-            
-            // One time positive value one time negative value 
-            if(check % 2 == 0) maxRotationZRunning = baseMaxRotationZRunning * incrementValueOverTime / timeToReachMaxValue;
-            else maxRotationZRunning = -baseMaxRotationZRunning * incrementValueOverTime / timeToReachMaxValue;
+            if (doOnceIdle || doOnceRunning) return;
+            doOnceIdle = true;
+            StartCoroutine(CoroutineBobbingCameraIdleCurve(camera.gameObject,camera.transform.localPosition, 
+                new Vector3(defaultPosX, defaultPosY, 0)));
         }
-
-
-
-        private bool doOnceIdle;
+        
+        
         private IEnumerator CoroutineBobbingCameraIdleCurve(GameObject obj, Vector3 start, Vector3 finish)
         {
             var timePast = 0f;
@@ -238,7 +159,6 @@ namespace CameraBehavior
         }
         
         
-        
         private float baseMaxRotationXIdle; // Get the value of MaxRotationX to modify it 
         private float baseMaxRotationZIdle;// Get the value of MaxRotationY to modify it 
         private void UpdateValueWhenIdle()
@@ -247,6 +167,109 @@ namespace CameraBehavior
             maxRotationZIdle = baseMaxRotationZIdle * incrementValueOverTime / timeToReachMaxValue;
             
         }
+
+        #endregion
+        
+        /// <summary>
+        /// Running Management here
+        /// </summary>
+        #region Running
+        
+        
+        private void BoobingRunning()
+        {
+            if (doOnceRunning || doOnceIdle) return;
+            doOnceRunning = true;
+            StartCoroutine(CoroutineBobbingCameraRunningCurve(camera.gameObject,camera.transform.localPosition, 
+                new Vector3(defaultPosX, defaultPosY, 0)));
+        }
+        
+        /// <summary>
+        /// Read the animation curve and add effect to the camera
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="start"></param>
+        /// <param name="finish"></param>
+        /// <returns></returns>
+        private IEnumerator CoroutineBobbingCameraRunningCurve(GameObject obj, Vector3 start, Vector3 finish)
+        {
+            var timePast = 0f;
+            float randomValueX = Random.Range(-maxHeightXRunning, maxHeightXRunning);
+            
+            yield return null;
+
+            while (timePast < durationRunning)
+            {
+                timePast += Time.deltaTime;
+                var linearTime = timePast / durationRunning;
+                var heightTime = BobbingCameraRunningCurve.Evaluate(linearTime);
+
+                var heightX = Mathf.Lerp(0, randomValueX, heightTime); //clamped between the max height and 0
+                var heightY = Mathf.Lerp(0f, maxHeightYRunning, heightTime); 
+                var heightZ = Mathf.Lerp(0f, maxHeightZRunning, heightTime); 
+
+
+                var rotZ = Mathf.Lerp(0, maxRotationZRunning, heightTime);
+                var rotX = Mathf.Lerp(0, maxRotationXRunning, heightTime);
+
+                // Camera Position
+                obj.transform.localPosition = Vector3.Lerp(start, finish, linearTime) + new Vector3(heightX, heightY, heightZ);
+                
+                // Camera Rotation
+                obj.transform.localEulerAngles = new Vector3(
+                    rotX + PlayerController.Instance.rotationX,
+                    0,
+                    rotZ); 
+                
+                yield return null;
+            }
+            doOnceRunning = false;
+        }
+        
+        
+        
+        /// <summary>
+        /// When Sprinting The value of the camera will increment by time
+        /// </summary>
+        private float incrementValueOverTime = 0; 
+        private float baseMaxRotationXRunning; // Get the value of MaxRotationX to modify it 
+        private float baseMaxRotationZRunning;// Get the value of MaxRotationY to modify it 
+        private int check; // just to check if the balance of camera is on right or left side
+        private void UpdateValueWhenSprinting()
+        {
+            if (PlayerController.Instance.isRunning )
+            {
+                if(incrementValueOverTime <= timeToReachMaxValue ) incrementValueOverTime += Time.deltaTime * 1;
+                if (!doOnceRunning)
+                {
+                    check++;
+                }
+            }
+            else
+            {
+                if(incrementValueOverTime >= 0 ) incrementValueOverTime -= Time.deltaTime * 1;
+            }
+            maxRotationXRunning =  baseMaxRotationXRunning * incrementValueOverTime / timeToReachMaxValue;
+            
+            // One time positive value one time negative value 
+            if(check % 2 == 0) maxRotationZRunning = baseMaxRotationZRunning * incrementValueOverTime / timeToReachMaxValue;
+            else maxRotationZRunning = -baseMaxRotationZRunning * incrementValueOverTime / timeToReachMaxValue;
+        }
+
+        #endregion
+
+
+        #region Crouch
+
+        private void Crouch()
+        {
+            StopAllCoroutines();
+            camera.transform.DOMove(crouchCameraPos.position, timertoCrouch);
+        } 
+
+        #endregion
+        
+        
     }
 }
 

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using DG.Tweening;
 
 
 namespace Player
@@ -33,6 +34,31 @@ namespace Player
         {
             Debug.DrawRay(hand.position,hand.forward * raycastLenght,Color.yellow);
             light.SetActive(isLightEquipped);
+
+            LightIntensityManagement();
+        }
+
+
+        private void LightIntensityManagement()
+        {
+            RaycastHit hit;
+            
+            if (Physics.Raycast(hand.position, hand.forward,out hit,raycastLenght))
+            {
+                if (!(hit.distance < 2))
+                {
+                    if (hit.distance < 4)
+                    {
+                        Debug.DrawRay(hand.position, hand.forward * raycastLenght, Color.green);
+                        light.GetComponent<Light>().intensity = 30;
+                    }
+                }
+                else
+                {
+                    Debug.DrawRay(hand.position, hand.forward * raycastLenght, Color.red);
+                    light.GetComponent<Light>().intensity = 10;
+                }
+            }
         }
         
         public void OnInteract(InputAction.CallbackContext ctx)
