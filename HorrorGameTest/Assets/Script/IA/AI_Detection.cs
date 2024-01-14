@@ -10,7 +10,6 @@ using UnityEngine;
 
 public class AI_Detection : MonoBehaviour
 {
-
     private SphereCollider sphereColl;
     [SerializeField] private float detectionRange = 5;
     private AI_HeadFollowing aiHeadFollowing;
@@ -26,17 +25,16 @@ public class AI_Detection : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            aiHeadFollowing.WhatToLookAt(PlayerController.Instance.transform);
+            //aiHeadFollowing.WhatToLookAt(PlayerController.Instance.transform);
             Detected();
         }
-        
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            aiHeadFollowing.WhatToLookAt(Simon.instance.transform);
+            //aiHeadFollowing.WhatToLookAt(Simon.instance.transform);
             Undected();
         }
     }

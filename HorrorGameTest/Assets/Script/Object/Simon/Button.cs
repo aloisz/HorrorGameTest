@@ -19,7 +19,7 @@ public class Button : InteractiveObj
         meshrenderer = GetComponent<MeshRenderer>();
         coll.enabled = false;
         
-        Simon.instance.OnPlaySimon += ChangeCollider;
+        Simon.instance.OnChangeCollider += ChangeCollider;
         basePos = transform.position;
         PressedButtonPosition = basePos + new Vector3(0,-.2f,0);
     }

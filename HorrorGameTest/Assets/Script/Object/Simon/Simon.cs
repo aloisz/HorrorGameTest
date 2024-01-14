@@ -14,14 +14,16 @@ namespace SimonGame
         [SerializeField] private List<numberOfIterationToDo> numberOfIterationToDo = new List<numberOfIterationToDo>(); // Interation Of The Simon
         private int numberOfIterationToDoIndex;
         
-        [SerializeField] private List<SimonState> simomStates = new List<SimonState>();// actions of the Simon
-        private List<SimonState> pressedButtonsStates = new List<SimonState>(); // pressed actions by player
+        [SerializeField] internal List<SimonState> simomStates = new List<SimonState>();// actions of the Simon
+        internal List<SimonState> pressedButtonsStates = new List<SimonState>(); // pressed actions by player
         private int numberOfState; // numbers of actions needed until verification
-        private int pressedNumbers; // numbers of pressed actions by the player
+        internal int pressedNumbers; // numbers of pressed actions by the player
 
-        private Button[] AllButtonsAvailable; // All Buttons of the Simon
+        internal Button[] AllButtonsAvailable; // All Buttons of the Simon
 
-        public Action OnPlaySimon;
+        public Action OnChangeCollider; // Called when changing collider of the buttons and the simon it self ==> player detection raycast
+        public Action OnSetAIHead; // set the AI head in the correct direction 
+        public Action OnAITurn; // AI Must plau
         
         public static Simon instance;
         private void Awake()
@@ -41,7 +43,7 @@ namespace SimonGame
 
         private void ChangeButtonsCollider() // Action to enalble/disable button collider 
         {
-            OnPlaySimon?.Invoke();
+            OnChangeCollider?.Invoke();
         }
 
         private void BatterieChecker(PlayerController player)
@@ -60,8 +62,7 @@ namespace SimonGame
             PlayerInteraction.Instance.RemoveBatterie(PlayerInteraction.Instance.numberOfBatterie);
         } 
         
-        
-        private void PlaySimon()
+        internal void PlaySimon()
         {
             if (PlayerInteraction.Instance.isLightEquipped) PlayerInteraction.Instance.isLightEquipped = false;
 
@@ -76,10 +77,12 @@ namespace SimonGame
                 numberOfIterationToDo[numberOfIterationToDoIndex].hasAlreadyBeenAdded = true;
             }
             StartCoroutine(CoroutineDebugAllColors(simomStates));
+            
+            OnSetAIHead?.Invoke();
         }
 
         private int coroutineDebugColorCount = 0;
-        IEnumerator CoroutineDebugAllColors(List<SimonState> simomStates)
+        private IEnumerator CoroutineDebugAllColors(List<SimonState> simomStates)
         {
             coroutineDebugColorCount = 0;
             foreach (var state in simomStates)
@@ -95,6 +98,9 @@ namespace SimonGame
             }
             canPlayTheSimon = true;
             ChangeButtonsCollider();
+            
+            yield return new WaitForSeconds(1);
+            OnAITurn?.Invoke();
         }
 
         public void PressButton(SimonState pressedState)
@@ -103,7 +109,7 @@ namespace SimonGame
             Verification();
         }
 
-        private void Verification()
+        internal void Verification()
         {
             if (pressedButtonsStates[pressedNumbers] == simomStates[pressedNumbers])
             {
@@ -124,12 +130,14 @@ namespace SimonGame
             ClearPlayerData();
             numberOfIterationToDoIndex++;
             Debug.Log("Gagner !");
+            OnSetAIHead?.Invoke();
         }
 
         private void GameLost()
         {
             Debug.Log("Tu as perdu");
             ClearPlayerData();
+            OnSetAIHead?.Invoke();
         }
 
         private void ClearPlayerData()

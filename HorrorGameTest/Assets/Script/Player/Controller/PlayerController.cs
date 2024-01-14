@@ -98,13 +98,30 @@ namespace Player
             
             isWalking = moveDirection != Vector3.zero; // check if walking
 
-            if (isRunning) isCrouching = false;
+            if (isRunning)
+            {
+                isCrouching = false;
+                isWalking = false;
+            }
             walkSpeed = isCrouching ? crouchWalkSpeed : baseWalkSpeed;
             
             CameraManager.instance.ChangeState(isCrouching
                 ? CameraManager.CameraState.Crouch
                 : CameraManager.CameraState.Idle);
             
+            CameraManager.instance.ChangeState(isRunning ? CameraManager.CameraState.Running : CameraManager.CameraState.Idle); //Player is running
+
+            /*if (!isWalking)
+            {
+                CameraManager.instance.ChangeState(isRunning
+                    ? CameraManager.CameraState.Running
+                    : CameraManager.CameraState.Idle);
+            }
+            else
+            {
+                CameraManager.instance.ChangeState(CameraManager.CameraState.Walking); //Player is running
+            }*/
+
             HandlesJumping(movementDirectionY);
             HandlesRotation();
         }

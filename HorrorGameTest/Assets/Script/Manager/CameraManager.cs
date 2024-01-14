@@ -17,10 +17,11 @@ namespace CameraBehavior
         public enum CameraState
         {
             Idle,
+            Walking,
             Running,
             Crouch
         }
-        public CameraState state;
+        public CameraState currentState;
 
         [Header("CrouchCamera")] 
         [SerializeField] private float timertoCrouch = .25f; 
@@ -85,9 +86,7 @@ namespace CameraBehavior
             UpdateValueWhenSprinting();
             UpdateValueWhenIdle();
 
-            ChangeState(PlayerController.Instance.isRunning ? CameraState.Running : CameraState.Idle); //Player is running
-
-            switch (state)
+            switch (currentState)
             {
                 case CameraState.Idle:
                     BoobingIdle();
@@ -98,13 +97,18 @@ namespace CameraBehavior
                 case CameraState.Running:
                     BoobingRunning();
                     break;
+                case CameraState.Walking:
+                    
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
         // Change The State Behavior
         public void ChangeState(CameraState state)
         {
-            this.state = state;
+            this.currentState = state;
         }
 
         
