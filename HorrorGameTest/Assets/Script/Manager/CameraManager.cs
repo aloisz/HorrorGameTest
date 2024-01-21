@@ -39,6 +39,7 @@ namespace CameraBehavior
         
         [Header("Walking")]
         [SerializeField] private float durationWalking = 1.0f; // Animation curve Duration
+        private bool doOnceWalking = false;
         [SerializeField] private float maxHeightXWalking = 3.0f; 
         [SerializeField] private float maxHeightYWalking = 3.0f;
         [SerializeField] private float maxHeightZWalking = 3.0f;
@@ -83,6 +84,9 @@ namespace CameraBehavior
             defaultPosY = camera.transform.localPosition.y;
             defaultPosX = camera.transform.localPosition.x;
 
+            // Idle 
+            baseMaxRotationZWalking = maxRotationZWalking;
+            
             //Running 
             baseMaxRotationXRunning = maxRotationXRunning;
             baseMaxRotationZRunning = maxRotationZRunning;
@@ -94,6 +98,7 @@ namespace CameraBehavior
         
         void LateUpdate()
         {
+            UpdateValueWhenWalking();
             UpdateValueWhenSprinting();
             UpdateValueWhenIdle();
 
@@ -132,7 +137,7 @@ namespace CameraBehavior
 
         private void BoobingIdle()
         {
-            if (doOnceIdle || doOnceRunning) return;
+            if (doOnceIdle || doOnceRunning || doOnceWalking) return;
             doOnceIdle = true;
             StartCoroutine(CoroutineBobbingCameraIdleCurve(camera.gameObject,camera.transform.localPosition, 
                 new Vector3(defaultPosX, defaultPosY, 0)));
@@ -194,7 +199,7 @@ namespace CameraBehavior
         
         private void BoobingRunning()
         {
-            if (doOnceRunning || doOnceIdle) return;
+            if (doOnceRunning || doOnceIdle || doOnceWalking) return;
             doOnceRunning = true;
             StartCoroutine(CoroutineBobbingCameraRunningCurve(camera.gameObject,camera.transform.localPosition, 
                 new Vector3(defaultPosX, defaultPosY, 0)));
@@ -255,7 +260,7 @@ namespace CameraBehavior
         {
             if (PlayerController.Instance.isRunning)
             {
-                if(incrementValueOverTime <= timeToReachMaxValue ) incrementValueOverTime += Time.deltaTime * 1;
+                if(incrementValueOverTime <= timeToReachMaxValue && !PlayerController.Instance.isWalking) incrementValueOverTime += Time.deltaTime * 1;
                 if (!doOnceRunning)
                 {
                     check++;
@@ -268,8 +273,14 @@ namespace CameraBehavior
             maxRotationXRunning =  baseMaxRotationXRunning * incrementValueOverTime / timeToReachMaxValue;
             
             // One time positive value one time negative value 
-            if(check % 2 == 0) maxRotationZRunning = baseMaxRotationZRunning * incrementValueOverTime / timeToReachMaxValue;
-            else maxRotationZRunning = -baseMaxRotationZRunning * incrementValueOverTime / timeToReachMaxValue;
+            if (check % 2 == 0)
+            {
+                maxRotationZRunning = baseMaxRotationZRunning * incrementValueOverTime / timeToReachMaxValue;
+            }
+            else
+            {
+                maxRotationZRunning = -baseMaxRotationZRunning * incrementValueOverTime / timeToReachMaxValue;
+            }
         }
 
         #endregion
@@ -282,8 +293,8 @@ namespace CameraBehavior
 
         private void BoobingWalking()
         {
-            if (doOnceRunning || doOnceIdle) return;
-            doOnceRunning = true;
+            if (doOnceWalking || doOnceIdle || doOnceRunning) return;
+            doOnceWalking = true;
             StartCoroutine(CoroutineBobbingCameraWalkingCurve(camera.gameObject,camera.transform.localPosition, 
                 new Vector3(defaultPosX, defaultPosY, 0)));
         }
@@ -327,7 +338,29 @@ namespace CameraBehavior
                 
                 yield return null;
             }
-            doOnceRunning = false;
+            doOnceWalking = false;
+        }
+
+
+        private float baseMaxRotationZWalking;
+        private int checkWalking; // just to check if the balance of camera is on right or left side
+        private void UpdateValueWhenWalking()
+        {
+            if (PlayerController.Instance.isWalking)
+            {
+                if (!doOnceWalking)
+                {
+                    checkWalking++;
+                }
+            }
+            if (checkWalking % 2 == 0)
+            {
+                maxRotationZWalking = baseMaxRotationZWalking;
+            }
+            else
+            {
+                maxRotationZWalking = -baseMaxRotationZWalking;
+            }
         }
 
         #endregion

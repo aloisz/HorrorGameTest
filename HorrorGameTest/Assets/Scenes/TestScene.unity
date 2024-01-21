@@ -21498,8 +21498,8 @@ MonoBehaviour:
   timertoCrouch: 0.35
   crouchCameraPos: {fileID: 1285300367}
   timeToReachMaxValue: 4
-  durationWalking: 0.8
-  maxHeightXWalking: 0.1
+  durationWalking: 0.5
+  maxHeightXWalking: 0
   maxHeightYWalking: 0.1
   maxHeightZWalking: 0.1
   maxRotationXWalking: 0
