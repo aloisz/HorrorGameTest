@@ -111,7 +111,7 @@ namespace Player
             
             CameraManager.instance.ChangeState(isRunning ? CameraManager.CameraState.Running : CameraManager.CameraState.Idle); //Player is running
 
-            /*if (!isWalking)
+            if (!isWalking)
             {
                 CameraManager.instance.ChangeState(isRunning
                     ? CameraManager.CameraState.Running
@@ -120,7 +120,7 @@ namespace Player
             else
             {
                 CameraManager.instance.ChangeState(CameraManager.CameraState.Walking); //Player is running
-            }*/
+            }
 
             HandlesJumping(movementDirectionY);
             HandlesRotation();

@@ -18626,7 +18626,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   smooth: 10
-  multiplier: -20
+  multiplier: -50
 --- !u!1 &979010206
 GameObject:
   m_ObjectHideFlags: 0
@@ -21494,10 +21494,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 0}
-  state: 0
+  currentState: 0
   timertoCrouch: 0.35
   crouchCameraPos: {fileID: 1285300367}
   timeToReachMaxValue: 4
+  durationWalking: 0.8
+  maxHeightXWalking: 0.1
+  maxHeightYWalking: 0.1
+  maxHeightZWalking: 0.1
+  maxRotationXWalking: 0
+  maxRotationZWalking: 2
   BobbingCameraRunningCurve:
     serializedVersion: 2
     m_Curve:

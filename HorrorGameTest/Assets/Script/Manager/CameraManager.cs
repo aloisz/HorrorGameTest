@@ -36,9 +36,20 @@ namespace CameraBehavior
         [Header("Camera Boobing")]
         
         [SerializeField] private float timeToReachMaxValue = 3; // Time to reach the max effect on camera
+        
+        [Header("Walking")]
+        [SerializeField] private float durationWalking = 1.0f; // Animation curve Duration
+        [SerializeField] private float maxHeightXWalking = 3.0f; 
+        [SerializeField] private float maxHeightYWalking = 3.0f;
+        [SerializeField] private float maxHeightZWalking = 3.0f;
+        
+        [Space]
+        [SerializeField] private float maxRotationXWalking= 20f;
+        [SerializeField] private float maxRotationZWalking = 20f;
+        
         [Header("Running")]
-        private bool doOnceRunning = false;
         public AnimationCurve BobbingCameraRunningCurve;
+        private bool doOnceRunning = false;
         [SerializeField] private float durationRunning = 1.0f; // Animation curve Duration
         [SerializeField] private float maxHeightXRunning = 3.0f; 
         [SerializeField] private float maxHeightYRunning = 3.0f;
@@ -49,8 +60,8 @@ namespace CameraBehavior
         [SerializeField] private float maxRotationZRunning = 20f;
         
         [Header("Idle")]
-        private bool doOnceIdle;
         public AnimationCurve BobbingCameraIdleCurve;
+        private bool doOnceIdle;
         [SerializeField] private float durationIdle = 1.0f;
         [SerializeField] private float maxHeightXIdle = 3.0f;
         [SerializeField] private float maxHeightYIdle = 3.0f;
@@ -98,7 +109,8 @@ namespace CameraBehavior
                     BoobingRunning();
                     break;
                 case CameraState.Walking:
-                    
+                    if(incrementValueOverTime >= .5f ) BoobingIdle();
+                    BoobingWalking();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -241,7 +253,7 @@ namespace CameraBehavior
         private int check; // just to check if the balance of camera is on right or left side
         private void UpdateValueWhenSprinting()
         {
-            if (PlayerController.Instance.isRunning )
+            if (PlayerController.Instance.isRunning)
             {
                 if(incrementValueOverTime <= timeToReachMaxValue ) incrementValueOverTime += Time.deltaTime * 1;
                 if (!doOnceRunning)
@@ -262,6 +274,64 @@ namespace CameraBehavior
 
         #endregion
 
+        /// <summary>
+        /// Walking Management here
+        /// </summary>
+
+        #region Walking
+
+        private void BoobingWalking()
+        {
+            if (doOnceRunning || doOnceIdle) return;
+            doOnceRunning = true;
+            StartCoroutine(CoroutineBobbingCameraWalkingCurve(camera.gameObject,camera.transform.localPosition, 
+                new Vector3(defaultPosX, defaultPosY, 0)));
+        }
+        
+        /// <summary>
+        /// Read the animation curve and add effect to the camera
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="start"></param>
+        /// <param name="finish"></param>
+        /// <returns></returns>
+        private IEnumerator CoroutineBobbingCameraWalkingCurve(GameObject obj, Vector3 start, Vector3 finish)
+        {
+            var timePast = 0f;
+            float randomValueX = Random.Range(-maxHeightXWalking, maxHeightXWalking);
+            
+            yield return null;
+
+            while (timePast < durationWalking)
+            {
+                timePast += Time.deltaTime;
+                var linearTime = timePast / durationWalking;
+                var heightTime = BobbingCameraRunningCurve.Evaluate(linearTime);
+
+                var heightX = Mathf.Lerp(0, randomValueX, heightTime); //clamped between the max height and 0
+                var heightY = Mathf.Lerp(0f, maxHeightYWalking, heightTime); 
+                var heightZ = Mathf.Lerp(0f, maxHeightZWalking, heightTime); 
+
+
+                var rotZ = Mathf.Lerp(0, maxRotationZWalking, heightTime);
+                var rotX = Mathf.Lerp(0, maxRotationXWalking, heightTime);
+
+                // Camera Position
+                obj.transform.localPosition = Vector3.Lerp(start, finish, linearTime) + new Vector3(heightX, heightY, heightZ);
+                
+                // Camera Rotation
+                obj.transform.localEulerAngles = new Vector3(
+                    rotX + PlayerController.Instance.rotationX,
+                    0,
+                    rotZ); 
+                
+                yield return null;
+            }
+            doOnceRunning = false;
+        }
+
+        #endregion
+        
 
         #region Crouch
 
