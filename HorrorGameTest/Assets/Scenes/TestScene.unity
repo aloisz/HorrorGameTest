@@ -3171,8 +3171,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RenderShadows: 1
-  m_RequiresDepthTextureOption: 2
-  m_RequiresOpaqueTextureOption: 2
+  m_RequiresDepthTextureOption: 1
+  m_RequiresOpaqueTextureOption: 1
   m_CameraType: 0
   m_Cameras: []
   m_RendererIndex: -1
@@ -46254,11 +46254,11 @@ SceneRoots:
   - {fileID: 410087041}
   - {fileID: 1198690461}
   - {fileID: 832575519}
+  - {fileID: 187165677}
   - {fileID: 840666268}
   - {fileID: 1071266220}
   - {fileID: 1306592116}
   - {fileID: 1805721215}
-  - {fileID: 187165677}
   - {fileID: 1007271940}
   - {fileID: 790469833}
   - {fileID: 1271442714}
