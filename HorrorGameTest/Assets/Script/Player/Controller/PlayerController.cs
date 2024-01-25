@@ -12,6 +12,7 @@ namespace Player
     public class PlayerController : MonoBehaviour
     {
         public Camera playerCamera;
+        public PlayerState currentState;
         [Header("Player controls")]
         [Header("Movement")]
         public bool canMove = true;
@@ -34,9 +35,6 @@ namespace Player
         [SerializeField] private float crouchWalkSpeed = 3f;
         private float baseWalkSpeed;
         
-        private Vector3 mouseWorldPosition;
-        private Vector2 mousePosition;
-        
         private CharacterController characterController;
         public static PlayerController Instance;
 
@@ -58,9 +56,8 @@ namespace Player
         
         void Update()
         {
-            mousePosition = Input.mousePosition;
             Movement();
-            mouseWorldPosition = Vector3.zero;
+            SetLogicWhenChangingState();
         }
         public void OnCrouch(InputAction.CallbackContext ctx)
         {
@@ -84,6 +81,11 @@ namespace Player
             lookPos = ctx.ReadValue<Vector2>();
         }
         
+        public void ChangeState(PlayerState state)
+        {
+            this.currentState = state;
+        }
+        
         #region Movement 
 
         private void Movement()
@@ -98,29 +100,12 @@ namespace Player
             
             isWalking = moveDirection != Vector3.zero; // check if walking
 
-            if (isRunning)
+            if (isRunning) // set logic when running
             {
                 isCrouching = false;
                 isWalking = false;
             }
-            walkSpeed = isCrouching ? crouchWalkSpeed : baseWalkSpeed;
-            
-            CameraManager.instance.ChangeState(isCrouching
-                ? CameraManager.CameraState.Crouch
-                : CameraManager.CameraState.Idle);
-            
-            CameraManager.instance.ChangeState(isRunning ? CameraManager.CameraState.Running : CameraManager.CameraState.Idle); //Player is running
-
-            if (!isWalking)
-            {
-                CameraManager.instance.ChangeState(isRunning
-                    ? CameraManager.CameraState.Running
-                    : CameraManager.CameraState.Idle);
-            }
-            else
-            {
-                CameraManager.instance.ChangeState(CameraManager.CameraState.Walking); //Player is running
-            }
+            walkSpeed = isCrouching ? crouchWalkSpeed : baseWalkSpeed; // set walk speed when crouching
 
             HandlesJumping(movementDirectionY);
             HandlesRotation();
@@ -157,9 +142,28 @@ namespace Player
         }
 
         #endregion
-
         
-
+        
+        private void SetLogicWhenChangingState()
+        {
+            if (!isWalking)
+            {
+                ChangeState(isRunning ? PlayerState.Running : PlayerState.Idle);
+            }
+            else
+            {
+                ChangeState(PlayerState.Walking);
+            }
+        }
     }
+}
+
+
+public enum PlayerState
+{
+    Idle,
+    Walking,
+    Running,
+    Crouch
 }
 

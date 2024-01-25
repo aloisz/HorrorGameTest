@@ -18609,6 +18609,7 @@ GameObject:
   m_Component:
   - component: {fileID: 840666268}
   - component: {fileID: 840666267}
+  - component: {fileID: 840666273}
   - component: {fileID: 840666270}
   - component: {fileID: 840666272}
   - component: {fileID: 840666269}
@@ -18727,6 +18728,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 0}
+  currentState: 0
   canMove: 1
   isWalking: 0
   isRunning: 0
@@ -18871,6 +18873,18 @@ MonoBehaviour:
   light: {fileID: 1155998100}
   raycastLenght: 10
   numberOfBatterie: 0
+--- !u!114 &840666273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840666264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e521122ec4ba7048aea0c3352e43b15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &853383640
 GameObject:
   m_ObjectHideFlags: 0
@@ -22437,7 +22451,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 0}
-  currentState: 0
   timertoCrouch: 0.35
   crouchCameraPos: {fileID: 1285300367}
   timeToReachMaxValue: 4

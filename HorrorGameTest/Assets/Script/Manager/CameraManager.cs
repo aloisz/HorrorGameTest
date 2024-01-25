@@ -13,15 +13,6 @@ namespace CameraBehavior
     public class CameraManager : MonoBehaviour
     {
         public Camera camera;
-        
-        public enum CameraState
-        {
-            Idle,
-            Walking,
-            Running,
-            Crouch
-        }
-        public CameraState currentState;
 
         [Header("CrouchCamera")] 
         [SerializeField] private float timertoCrouch = .25f; 
@@ -102,30 +93,22 @@ namespace CameraBehavior
             UpdateValueWhenSprinting();
             UpdateValueWhenIdle();
 
-            switch (currentState)
+            switch (PlayerController.Instance.currentState)
             {
-                case CameraState.Idle:
+                case PlayerState.Idle:
                     BoobingIdle();
                     break;
-                case CameraState.Crouch:
+                case PlayerState.Crouch:
                     Crouch();
                     break;
-                case CameraState.Running:
+                case PlayerState.Running:
                     BoobingRunning();
                     break;
-                case CameraState.Walking:
+                case PlayerState.Walking:
                     if(incrementValueOverTime >= .5f ) BoobingIdle();
                     BoobingWalking();
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
-        }
-
-        // Change The State Behavior
-        public void ChangeState(CameraState state)
-        {
-            this.currentState = state;
         }
 
         
