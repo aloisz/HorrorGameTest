@@ -10,11 +10,11 @@ namespace Player
     public class PlayerInteraction : MonoBehaviour
     {
         [Header("Player interaction")] 
-        [SerializeField] bool isInteracting;
-        [SerializeField] private Transform hand;
+        [SerializeField] internal bool isInteracting;
+        [SerializeField] internal Transform hand;
         [SerializeField] private GameObject light;
         internal bool isLightEquipped; 
-        [SerializeField] private float raycastLenght = 10;
+        [SerializeField] internal float raycastLenght = 10;
 
         [Space] 
         [SerializeField] internal int numberOfBatterie;
@@ -61,27 +61,6 @@ namespace Player
             }
         }
         
-        public void OnInteract(InputAction.CallbackContext ctx)
-        {
-            if (ctx.started)
-            {
-                isInteracting = true;
-                RaycastHit hit;
-                if (Physics.Raycast(hand.position, hand.forward,out hit,raycastLenght))
-                {
-                    if (hit.transform.GetComponent<InteractiveObj>() != null)
-                    {
-                        hit.transform.GetComponent<InteractiveObj>().Interact(PlayerController.Instance);
-                    }
-                }
-            }
-            if (ctx.canceled)isInteracting = false;
-        }
-        
-        public void OnUse(InputAction.CallbackContext ctx)
-        {
-            isLightEquipped = !isLightEquipped;
-        }
         
         
         public void AddBatterie(int numberofBatterie)

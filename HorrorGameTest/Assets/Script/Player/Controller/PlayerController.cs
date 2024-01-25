@@ -15,15 +15,15 @@ namespace Player
         public PlayerState currentState;
         [Header("Player controls")]
         [Header("Movement")]
-        public bool canMove = true;
-        [SerializeField]internal  bool isWalking;
-        [SerializeField]internal  bool isRunning;
-        [SerializeField]internal float walkSpeed = 6f;
+        private bool canMove = true;
+        internal  bool isWalking;
+        internal  bool isRunning;
+        [Header("Movement")][SerializeField]internal float walkSpeed = 6f;
         [SerializeField]private float runSpeed = 12f;
         [SerializeField]private float jumpPower = 7f;
         [SerializeField]private float gravity = 10f;
 
-        private Vector2 lookPos;
+        internal Vector2 lookPos;
         [SerializeField]private float lookSpeed = 2f;
         [SerializeField]private float lookXLimit = 45f;
 
@@ -31,8 +31,8 @@ namespace Player
         internal float rotationX = 0; 
 
         [Header("Crouch")]
-        public bool isCrouching;
-        [SerializeField] private float crouchWalkSpeed = 3f;
+        internal bool isCrouching;
+        [Header("Crouch")][SerializeField] private float crouchWalkSpeed = 3f;
         private float baseWalkSpeed;
         
         private CharacterController characterController;
@@ -58,27 +58,6 @@ namespace Player
         {
             Movement();
             SetLogicWhenChangingState();
-        }
-        public void OnCrouch(InputAction.CallbackContext ctx)
-        {
-            isCrouching = !isCrouching;
-        }
-        
-        public void OnRun(InputAction.CallbackContext ctx)
-        {
-            if (ctx.started)
-            {
-                isRunning = true;
-                isCrouching = true;
-            }
-            
-            if (ctx.canceled)
-                isRunning = false;
-        }
-
-        public void OnLook(InputAction.CallbackContext ctx)
-        {
-            lookPos = ctx.ReadValue<Vector2>();
         }
         
         public void ChangeState(PlayerState state)

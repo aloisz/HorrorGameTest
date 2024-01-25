@@ -18773,8 +18773,8 @@ MonoBehaviour:
     m_ActionName: Player/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 840666270}
-        m_TargetAssemblyTypeName: Player.PlayerController, Assembly-CSharp
+      - m_Target: {fileID: 840666273}
+        m_TargetAssemblyTypeName: PlayerInput, Assembly-CSharp
         m_MethodName: OnRun
         m_Mode: 0
         m_Arguments:
@@ -18789,8 +18789,8 @@ MonoBehaviour:
     m_ActionName: Player/Run[/Keyboard/leftShift,/XInputControllerWindows/leftTrigger]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 840666272}
-        m_TargetAssemblyTypeName: Player.PlayerInteraction, Assembly-CSharp
+      - m_Target: {fileID: 840666273}
+        m_TargetAssemblyTypeName: PlayerInput, Assembly-CSharp
         m_MethodName: OnUse
         m_Mode: 0
         m_Arguments:
@@ -18805,8 +18805,8 @@ MonoBehaviour:
     m_ActionName: Player/Interact[/Keyboard/f,/XInputControllerWindows/buttonWest]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 840666270}
-        m_TargetAssemblyTypeName: Player.PlayerController, Assembly-CSharp
+      - m_Target: {fileID: 840666273}
+        m_TargetAssemblyTypeName: PlayerInput, Assembly-CSharp
         m_MethodName: OnCrouch
         m_Mode: 0
         m_Arguments:
@@ -18821,8 +18821,8 @@ MonoBehaviour:
     m_ActionName: Player/Crouch[/Keyboard/c,/Keyboard/leftCtrl,/XInputControllerWindows/buttonEast]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 840666270}
-        m_TargetAssemblyTypeName: Player.PlayerController, Assembly-CSharp
+      - m_Target: {fileID: 840666273}
+        m_TargetAssemblyTypeName: PlayerInput, Assembly-CSharp
         m_MethodName: OnLook
         m_Mode: 0
         m_Arguments:
@@ -18837,8 +18837,8 @@ MonoBehaviour:
     m_ActionName: Player/Look[/Mouse/position,/XInputControllerWindows/rightStick]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 840666272}
-        m_TargetAssemblyTypeName: Player.PlayerInteraction, Assembly-CSharp
+      - m_Target: {fileID: 840666273}
+        m_TargetAssemblyTypeName: PlayerInput, Assembly-CSharp
         m_MethodName: OnInteract
         m_Mode: 0
         m_Arguments:
