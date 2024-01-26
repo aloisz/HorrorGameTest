@@ -27,6 +27,7 @@ namespace CameraBehavior
         [Header("Camera Boobing")]
         
         [SerializeField] private float timeToReachMaxValue = 3; // Time to reach the max effect on camera
+        [SerializeField]private float incrementValueOverTime = 0; 
         
         [Header("Walking")]
         [SerializeField] private float durationWalking = 1.0f; // Animation curve Duration
@@ -108,6 +109,11 @@ namespace CameraBehavior
                     if(incrementValueOverTime >= .5f ) BoobingIdle();
                     BoobingWalking();
                     break;
+                case PlayerState.Jumping:
+                    if(incrementValueOverTime <= timeToReachMaxValue) incrementValueOverTime++;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -235,7 +241,6 @@ namespace CameraBehavior
         /// <summary>
         /// When Sprinting The value of the camera will increment by time
         /// </summary>
-        private float incrementValueOverTime = 0; 
         private float baseMaxRotationXRunning; // Get the value of MaxRotationX to modify it 
         private float baseMaxRotationZRunning;// Get the value of MaxRotationY to modify it 
         private int check; // just to check if the balance of camera is on right or left side

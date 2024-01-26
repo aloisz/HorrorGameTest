@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Player;
 using UnityEngine;
 
-public class Batterie : InteractiveObj
+public class Batterie : Obj
 {
     [SerializeField] private int numberOfBatterie = 1;
 

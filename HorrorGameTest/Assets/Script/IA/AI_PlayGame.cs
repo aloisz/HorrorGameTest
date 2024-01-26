@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Player;
 using SimonGame;
 using UnityEngine;
-
+using NaughtyAttributes;
 
 namespace AI
 {
@@ -29,7 +29,7 @@ namespace AI
             StateMachine(currentState);
         }
 
-        [ContextMenu("Play Simon")]
+        [Button("Play Simon")]
         private void PlaySimon()
         {
             //Simon.instance.PlaySimon();
@@ -38,7 +38,7 @@ namespace AI
         
         
         
-        [ContextMenu("PressButtons")]
+        [Button("PressButtons")]
         private void PressButtons()
         {
             ChangeState(AI_State.Playing);

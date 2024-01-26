@@ -7,3 +7,6 @@ public abstract class InteractiveObj : MonoBehaviour
 {
     public abstract void Interact(PlayerController player);
 }
+
+
+

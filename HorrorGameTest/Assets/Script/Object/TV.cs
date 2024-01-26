@@ -4,7 +4,7 @@ using System.Data.SqlTypes;
 using Player;
 using UnityEngine;
 
-public class TV : InteractiveObj
+public class TV : Obj
 {
     [SerializeField] private Light light;
     public bool canRunCurve;

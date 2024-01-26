@@ -15,7 +15,7 @@ namespace Player
         public PlayerState currentState;
         [Header("Player controls")]
         [Header("Movement")]
-        private bool canMove = true;
+        internal bool canMove = true;
         internal  bool isWalking;
         internal  bool isRunning;
         [Header("Movement")][SerializeField]internal float walkSpeed = 6f;
@@ -35,7 +35,7 @@ namespace Player
         [Header("Crouch")][SerializeField] private float crouchWalkSpeed = 3f;
         private float baseWalkSpeed;
         
-        private CharacterController characterController;
+        internal CharacterController characterController;
         public static PlayerController Instance;
 
         private void Awake()
@@ -57,6 +57,7 @@ namespace Player
         void Update()
         {
             Movement();
+            HandlesRotation();
             SetLogicWhenChangingState();
         }
         
@@ -69,6 +70,7 @@ namespace Player
 
         private void Movement()
         {
+            if (!canMove) return;
             Vector3 forward = transform.TransformDirection(Vector3.forward);
             Vector3 right = transform.TransformDirection(Vector3.right);
             
@@ -87,7 +89,7 @@ namespace Player
             walkSpeed = isCrouching ? crouchWalkSpeed : baseWalkSpeed; // set walk speed when crouching
 
             HandlesJumping(movementDirectionY);
-            HandlesRotation();
+            characterController.Move(moveDirection * Time.deltaTime);
         }
 
         private void HandlesJumping(float movementDirectionY)
@@ -111,9 +113,6 @@ namespace Player
         private float posX;
         private void HandlesRotation()
         {
-            characterController.Move(moveDirection * Time.deltaTime);
-
-            if (!canMove) return;
             rotationX += -lookPos.y * lookSpeed;
             rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
             playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
@@ -125,14 +124,22 @@ namespace Player
         
         private void SetLogicWhenChangingState()
         {
-            if (!isWalking)
+            if (characterController.isGrounded)
             {
-                ChangeState(isRunning ? PlayerState.Running : PlayerState.Idle);
+                if (!isWalking)
+                {
+                    ChangeState(isRunning ? PlayerState.Running : PlayerState.Idle);
+                }
+                else
+                {
+                    ChangeState(PlayerState.Walking);
+                }
             }
             else
             {
-                ChangeState(PlayerState.Walking);
+                ChangeState(PlayerState.Jumping);
             }
+            
         }
     }
 }
@@ -143,6 +150,7 @@ public enum PlayerState
     Idle,
     Walking,
     Running,
-    Crouch
+    Crouch,
+    Jumping
 }
 
