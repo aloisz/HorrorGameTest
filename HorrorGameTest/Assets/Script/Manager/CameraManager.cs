@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using NaughtyAttributes;
 using Player;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -13,10 +14,6 @@ namespace CameraBehavior
     public class CameraManager : MonoBehaviour
     {
         public Camera camera;
-
-        [Header("CrouchCamera")] 
-        [SerializeField] private float timertoCrouch = .25f; 
-        [SerializeField] private Transform crouchCameraPos;
         
         [Space]
         private float defaultPosY = 0; // defaults camera position on y axis
@@ -29,42 +26,51 @@ namespace CameraBehavior
         [SerializeField] private float timeToReachMaxValue = 3; // Time to reach the max effect on camera
         [SerializeField]private float incrementValueOverTime = 0; 
         
+        [HorizontalLine(color: EColor.Red)]
         [Header("Walking")]
-        [SerializeField] private float durationWalking = 1.0f; // Animation curve Duration
-        private bool doOnceWalking = false;
-        [SerializeField] private float maxHeightXWalking = 3.0f; 
-        [SerializeField] private float maxHeightYWalking = 3.0f;
-        [SerializeField] private float maxHeightZWalking = 3.0f;
+        [Foldout("Walking")][SerializeField] private float durationWalking = 1.0f; // Animation curve Duration
+        [Foldout("Walking")]private bool doOnceWalking = false;
+        [Foldout("Walking")][SerializeField] private float maxHeightXWalking = 3.0f; 
+        [Foldout("Walking")][SerializeField] private float maxHeightYWalking = 3.0f;
+        [Foldout("Walking")][SerializeField] private float maxHeightZWalking = 3.0f;
         
         [Space]
-        [SerializeField] private float maxRotationXWalking= 20f;
-        [SerializeField] private float maxRotationZWalking = 20f;
+        [Foldout("Walking")][SerializeField] private float maxRotationXWalking= 20f;
+        [Foldout("Walking")][SerializeField] private float maxRotationZWalking = 20f;
         
+        [HorizontalLine(color: EColor.Red)]
         [Header("Running")]
-        public AnimationCurve BobbingCameraRunningCurve;
-        private bool doOnceRunning = false;
-        [SerializeField] private float durationRunning = 1.0f; // Animation curve Duration
-        [SerializeField] private float maxHeightXRunning = 3.0f; 
-        [SerializeField] private float maxHeightYRunning = 3.0f;
-        [SerializeField] private float maxHeightZRunning = 3.0f;
+        [Foldout("Running")]public AnimationCurve BobbingCameraRunningCurve;
+        [Foldout("Running")]private bool doOnceRunning = false;
+        [Foldout("Running")][SerializeField] private float durationRunning = 1.0f; // Animation curve Duration
+        [Foldout("Running")][SerializeField] private float maxHeightXRunning = 3.0f; 
+        [Foldout("Running")][SerializeField] private float maxHeightYRunning = 3.0f;
+        [Foldout("Running")][SerializeField] private float maxHeightZRunning = 3.0f;
         
         [Space]
-        [SerializeField] private float maxRotationXRunning = 20f;
-        [SerializeField] private float maxRotationZRunning = 20f;
+        [Foldout("Running")][SerializeField] private float maxRotationXRunning = 20f;
+        [Foldout("Running")][SerializeField] private float maxRotationZRunning = 20f;
         
+        [HorizontalLine(color: EColor.Red)]
         [Header("Idle")]
-        public AnimationCurve BobbingCameraIdleCurve;
-        private bool doOnceIdle;
-        [SerializeField] private float durationIdle = 1.0f;
-        [SerializeField] private float maxHeightXIdle = 3.0f;
-        [SerializeField] private float maxHeightYIdle = 3.0f;
-        [SerializeField] private float maxHeightZIdle = 3.0f;
+        [Foldout("Idle")]public AnimationCurve BobbingCameraIdleCurve;
+        [Foldout("Idle")]private bool doOnceIdle;
+        [Foldout("Idle")][SerializeField] private float durationIdle = 1.0f;
+        [Foldout("Idle")][SerializeField] private float maxHeightXIdle = 3.0f;
+        [Foldout("Idle")][SerializeField] private float maxHeightYIdle = 3.0f;
+        [Foldout("Idle")][SerializeField] private float maxHeightZIdle = 3.0f;
         
         [Space]
-        [SerializeField] private float maxRotationXIdle = 20f;
-        [SerializeField] private float maxRotationZIdle = 20f;
+        [Foldout("Idle")][SerializeField] private float maxRotationXIdle = 20f;
+        [Foldout("Idle")][SerializeField] private float maxRotationZIdle = 20f;
+        
+        [HorizontalLine(color: EColor.Red)]
+        [Header("CrouchCamera")] 
+        [Foldout("CrouchCamera")][SerializeField] private float timertoCrouch = .25f; 
+        [Foldout("CrouchCamera")][SerializeField] private Transform crouchCameraPos;
 
         public static CameraManager instance;
+        
 
         private void Awake()
         {

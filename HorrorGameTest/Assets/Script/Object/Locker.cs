@@ -45,6 +45,8 @@ public class Locker : Obj
     {
         //TODO Logic to enter the Locker
         isOccupied = true;
+        PlayerController.Instance.ChangeState(PlayerState.Idle);
+        PlayerController.Instance.characterController.enabled = false;
         PlayerController.Instance.canMove = false;
         
         PlayerController.Instance.transform.DOMove(insideLockerPoint, 1);
@@ -60,6 +62,8 @@ public class Locker : Obj
 
     private void OnCompleteExit()
     {
+        PlayerController.Instance.ChangeState(PlayerState.Idle);
+        PlayerController.Instance.characterController.enabled = true;
         coll.enabled = true;
         isOccupied = false;
         PlayerController.Instance.canMove = true;
