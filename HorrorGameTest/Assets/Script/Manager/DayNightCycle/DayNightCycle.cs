@@ -15,7 +15,7 @@ public class DayNightCycle : MonoBehaviour
     
     void Update()
     {
-        float timeOfDay = Mathf.Repeat(Time.time, dayDuration) / dayDuration; // Normalisation du temps
+        float timeOfDay = Mathf.Repeat(Time.time, dayDuration * 60) / (dayDuration * 60 ); // Normalisation du temps
         float sunAngle = Mathf.Lerp(0, 360, timeOfDay); // Angle du soleil pendant la journée
         
         sunLight.transform.rotation = Quaternion.Euler(new Vector3(sunAngle, 0, 0));
