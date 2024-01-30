@@ -12,6 +12,8 @@ public class ObjGenerator : MonoBehaviour
     public GameObject objToSpawn;
     public List<GameObject> ObjData;
     public float minDist;
+    public float maxDist;
+    [MinMaxSlider(.5f, 2)] public Vector2 SizeOfObj;
 
     [Space] 
     public int densityToSpawn;
@@ -29,17 +31,18 @@ public class ObjGenerator : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(startRayPos, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity))
             {
-                if (hit.point.y >= minDist)
+                if (hit.point.y >= minDist && hit.point.y <= maxDist)
                 {
-                    Debug.DrawRay(startRayPos, transform.TransformDirection(Vector3.down) * hit.distance, Color.green , 2);
+                    Debug.DrawRay(startRayPos, transform.TransformDirection(Vector3.down) * hit.distance, Color.green , .5f);
                     Debug.Log("Did Hit");
                     GameObject tree = Instantiate(objToSpawn, hit.point, Quaternion.identity, transform);
+                    tree.transform.localScale = new Vector3(1, Random.Range(SizeOfObj.x, SizeOfObj.y), 1);
                     ObjData.Add(tree);
                     count++;
                 }
                 else
                 {
-                    Debug.DrawRay(startRayPos, transform.TransformDirection(Vector3.down) * hit.distance, Color.red , 2);
+                    Debug.DrawRay(startRayPos, transform.TransformDirection(Vector3.down) * hit.distance, Color.red , .5f);
                 }
             }
         } while (count != densityToSpawn);

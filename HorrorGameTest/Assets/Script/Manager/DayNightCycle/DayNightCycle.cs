@@ -4,15 +4,22 @@ using UnityEngine;
 
 public class DayNightCycle : MonoBehaviour
 {
-    public Vector3 rotate;
+    private Vector3 sunPos;
+    public float dayDuration = 10.0f; // Durée d'une journée en secondes
+    private Light sunLight;
     void Start()
     {
-       
+        sunLight = GetComponent<Light>();   
     }
 
-    // Update is called once per frame
+    
     void Update()
     {
-        transform.Rotate(rotate * Time.deltaTime);
+        float timeOfDay = Mathf.Repeat(Time.time, dayDuration) / dayDuration; // Normalisation du temps
+        float sunAngle = Mathf.Lerp(0, 360, timeOfDay); // Angle du soleil pendant la journée
+        
+        sunLight.transform.rotation = Quaternion.Euler(new Vector3(sunAngle, 0, 0));
+
+        sunLight.intensity = sunAngle > 0 && sunAngle < 180 ? 1 : 0;
     }
 }
