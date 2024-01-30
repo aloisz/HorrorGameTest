@@ -8,8 +8,9 @@ using UnityEngine.Serialization;
 public class MapGenerator : MonoBehaviour
 {
     public DrawMode drawMode;
+    public bool useFallOff;
     
-    private const int mapChunkSize = 241;
+    public int mapChunkSize = 241;
     [Header("Details")]
     [Range(0,6)]
     public int levelOfDetail;
@@ -30,7 +31,12 @@ public class MapGenerator : MonoBehaviour
     public TerrainType[] regions;
 
     public bool autoUpdate;
+    private float[,] fallOffMap;
 
+    private void Awake()
+    {
+        fallOffMap = FallOffGen.GenerateFallOffMap(mapChunkSize);
+    }
 
     private void Start()
     {
@@ -47,6 +53,10 @@ public class MapGenerator : MonoBehaviour
         {
             for (int x = 0; x < mapChunkSize; x++)
             {
+                if (useFallOff)
+                {
+                    noiseMap[x, y] = Mathf.Clamp01(noiseMap[x, y] - fallOffMap[x, y]);
+                }
                 float currentHeight = noiseMap[x,y];
                 for (int i = 0; i < regions.Length; i++)
                 {
@@ -66,20 +76,25 @@ public class MapGenerator : MonoBehaviour
             case DrawMode.NoiseMap:
                 display.DrawTexture(TextureGenerator.TextureFromHeightMap(noiseMap));
                 break;
+            
             case DrawMode.ColorMap:
                 display.DrawTexture(TextureGenerator.TextureFromColorMap(coulourMap, mapChunkSize, mapChunkSize));
                 break;
+            
             case DrawMode.DrawMesh:
                 display.DrawMesh(MeshGenerator.GenerateTerrainMesh(noiseMap, meshHeightMultiplier, meshCurve, levelOfDetail), 
                     TextureGenerator.TextureFromColorMap(coulourMap, mapChunkSize, mapChunkSize));
                 break;
-            default:
-                throw new ArgumentOutOfRangeException();
+            
+            case DrawMode.FallOffMap:
+                display.DrawTexture(TextureGenerator.TextureFromHeightMap(FallOffGen.GenerateFallOffMap(mapChunkSize)));
+                break;
         }
     }
 
     private void OnValidate()
     {
+        fallOffMap = FallOffGen.GenerateFallOffMap(mapChunkSize);
         if (lacunarity < 1) lacunarity = 1;
         if (octaves < 0) octaves = 0;
     }
@@ -97,5 +112,6 @@ public enum DrawMode
 {
     NoiseMap,
     ColorMap,
-    DrawMesh
+    DrawMesh,
+    FallOffMap
 }
