@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,4 +22,5 @@ public class MapDisplay : MonoBehaviour
         meshRenderer.sharedMaterial.mainTexture = texture2D;
         meshCollider.sharedMesh = meshFilter.mesh;
     }
+    
 }

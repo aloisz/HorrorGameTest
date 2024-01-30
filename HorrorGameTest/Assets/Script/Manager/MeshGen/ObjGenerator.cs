@@ -21,11 +21,6 @@ public class ObjGenerator : MonoBehaviour
     [Button("Spawn Objects")]
     public void SpawnObjects()
     {
-        for (int ray = 0; ray < densityToSpawn; ray++)
-        {
-            
-        }
-
         int count = 0;
         do
         {
