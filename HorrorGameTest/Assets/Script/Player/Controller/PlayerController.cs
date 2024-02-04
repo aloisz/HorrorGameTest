@@ -24,8 +24,8 @@ namespace Player
         [SerializeField]private float gravity = 10f;
 
         internal Vector2 lookPos;
-        [SerializeField]private float lookSpeed = 2f;
-        [SerializeField]private float lookXLimit = 45f;
+        [SerializeField]internal float lookSpeed = 2f;
+        [SerializeField]internal float lookXLimit = 45f;
 
         [HideInInspector]public Vector3 moveDirection = Vector3.zero;
         internal float rotationX = 0; 
@@ -56,9 +56,12 @@ namespace Player
         
         void Update()
         {
-            Movement();
+            if (canMove)
+            {
+                Movement();
+                SetLogicWhenChangingState();
+            }
             HandlesRotation();
-            SetLogicWhenChangingState();
         }
         
         public void ChangeState(PlayerState state)
@@ -116,7 +119,7 @@ namespace Player
             rotationX += -lookPos.y * lookSpeed;
             rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
             playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
-            transform.rotation *= Quaternion.Euler(0, lookPos.x * lookSpeed, 0);
+            if(canMove) transform.rotation *= Quaternion.Euler(0, lookPos.x * lookSpeed, 0);
         }
 
         #endregion

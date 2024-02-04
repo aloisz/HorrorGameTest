@@ -13,8 +13,10 @@ public class Locker : Obj
     [Space] 
     [SerializeField] private Vector3 insideLockerPoint; // position where the player is when inside the locker
     [SerializeField] private Vector3 outsideLockerPoint; // position where the player is when leaving the locker
-     
-
+    
+    private float baseLookSpeed;
+    [SerializeField]private float lookSpeed = 2f;
+    
     private Collider coll;
     
     void Start()
@@ -44,6 +46,9 @@ public class Locker : Obj
     private void EnterTheLocker()
     {
         //TODO Logic to enter the Locker
+        baseLookSpeed = PlayerController.Instance.lookSpeed;
+        PlayerController.Instance.lookSpeed = lookSpeed;
+        
         isOccupied = true;
         PlayerController.Instance.ChangeState(PlayerState.Idle);
         PlayerController.Instance.characterController.enabled = false;
@@ -56,6 +61,8 @@ public class Locker : Obj
     private void ExitTheLocker()
     {
         //TODO Logic to exit the Locker
+        PlayerController.Instance.lookSpeed = baseLookSpeed;
+        
         PlayerController.Instance.transform.DOMove(outsideLockerPoint, 1).OnComplete((() => 
             OnCompleteExit()));
     }

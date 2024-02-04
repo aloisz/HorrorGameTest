@@ -23148,6 +23148,8 @@ MonoBehaviour:
   isOccupied: 0
   insideLockerPoint: {x: 0, y: 0, z: 0}
   outsideLockerPoint: {x: 0, y: 0, z: 0}
+  lookSpeed: 0.05
+  lookXLimit: 45
 --- !u!1 &1271176652
 GameObject:
   m_ObjectHideFlags: 0

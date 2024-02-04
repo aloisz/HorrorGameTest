@@ -116,10 +116,8 @@ namespace CameraBehavior
                     BoobingWalking();
                     break;
                 case PlayerState.Jumping:
-                    if(incrementValueOverTime <= timeToReachMaxValue) incrementValueOverTime++;
+                    //if(incrementValueOverTime <= timeToReachMaxValue) incrementValueOverTime++;
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
 
