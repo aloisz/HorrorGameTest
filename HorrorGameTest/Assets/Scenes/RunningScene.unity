@@ -5216,8 +5216,8 @@ MonoBehaviour:
   bulletOfIce: {fileID: 8360121174184371370, guid: eb22b4aa97a3af44486b2b0db60689b3,
     type: 3}
   lenghtDungeon: 10
-  heightDungeon: 10
-  nbrOfRoom: 0
+  heightDungeon: 20
+  nbrOfRoom: 5
   gridOffset: 20
   gridOffsetHeight: 5
 --- !u!1 &1147262990
