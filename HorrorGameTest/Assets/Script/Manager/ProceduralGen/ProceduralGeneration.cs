@@ -42,7 +42,7 @@ public class ProceduralGeneration : MonoBehaviour
                     int random = Random.Range(0, 20);
                     if (random == 0)
                     {
-                        GameObject bulletOfIce = Instantiate(this.bulletOfIce, new Vector3(x * gridOffset, 0, z * gridOffset), Quaternion.identity, transform);
+                        GameObject bulletOfIce = Instantiate(this.bulletOfIce, new Vector3(x * gridOffset, y * gridOffsetHeight, z * gridOffset), Quaternion.identity, transform);
                         bulletOfIce.transform.position += new Vector3(10, 1, 0);
                     }
                 }
